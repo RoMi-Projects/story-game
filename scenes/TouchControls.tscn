@@ -52,3 +52,27 @@ offset_top = 138.0
 offset_right = 314.0
 offset_bottom = 178.0
 text = "A"
+
+[node name="Pickup" type="Button" parent="DPad"]
+layout_mode = 1
+offset_left = 274.0
+offset_top = 92.0
+offset_right = 314.0
+offset_bottom = 132.0
+text = "B"
+
+[node name="Inventory" type="Button" parent="DPad"]
+layout_mode = 1
+offset_left = 288.0
+offset_top = 4.0
+offset_right = 314.0
+offset_bottom = 30.0
+text = "I"
+
+[node name="Quests" type="Button" parent="DPad"]
+layout_mode = 1
+offset_left = 288.0
+offset_top = 32.0
+offset_right = 314.0
+offset_bottom = 58.0
+text = "Q"

@@ -19,6 +19,9 @@ const ROW_FOR_FACING := {
 	"right": 3,
 }
 
+const DEFAULT_SHEET := preload("res://assets/player_spritesheet.png")
+const CARRY_SHEET := preload("res://assets/player_carry_spritesheet.png")
+
 @onready var _sprite: Sprite2D = $Sprite
 
 var _facing := "down"
@@ -26,6 +29,18 @@ var _facing := "down"
 
 func _ready() -> void:
 	add_to_group("player")
+	_apply_spawn()
+	QuestManager.changed.connect(_update_spritesheet)
+	_update_spritesheet()
+
+
+func _apply_spawn() -> void:
+	if GameState.has_spawn():
+		global_position = GameState.take_spawn()
+
+
+func _update_spritesheet() -> void:
+	_sprite.texture = CARRY_SHEET if QuestManager.is_carrying() else DEFAULT_SHEET
 var _walk_frame := 0
 var _time_on_frame := 0.0
 

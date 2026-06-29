@@ -1,0 +1,120 @@
+[gd_scene load_steps=14 format=3]
+
+[ext_resource type="Texture2D" path="res://assets/garden_grass.png" id="1"]
+[ext_resource type="Texture2D" path="res://assets/fence.png" id="2"]
+[ext_resource type="Texture2D" path="res://assets/garden_path.png" id="3"]
+[ext_resource type="PackedScene" path="res://scenes/Player.tscn" id="4"]
+[ext_resource type="PackedScene" path="res://scenes/TouchControls.tscn" id="5"]
+[ext_resource type="PackedScene" path="res://scenes/DialogueBox.tscn" id="6"]
+[ext_resource type="PackedScene" path="res://scenes/ItemPopup.tscn" id="7"]
+[ext_resource type="PackedScene" path="res://scenes/InventoryPanel.tscn" id="8"]
+[ext_resource type="PackedScene" path="res://scenes/QuestLog.tscn" id="9"]
+[ext_resource type="PackedScene" path="res://scenes/TrashContainer.tscn" id="10"]
+[ext_resource type="PackedScene" path="res://scenes/Door.tscn" id="11"]
+
+[sub_resource type="RectangleShape2D" id="FenceHorizontal"]
+size = Vector2(320, 16)
+
+[sub_resource type="RectangleShape2D" id="FenceVertical"]
+size = Vector2(16, 180)
+
+[node name="Garden" type="Node2D"]
+y_sort_enabled = true
+
+[node name="Grass" type="Sprite2D" parent="."]
+z_index = -2
+texture_repeat = 2
+centered = false
+texture = ExtResource("1")
+region_enabled = true
+region_rect = Rect2(0, 0, 320, 180)
+
+[node name="PathVertical" type="Sprite2D" parent="."]
+z_index = -1
+texture_repeat = 2
+centered = false
+position = Vector2(152, 30)
+texture = ExtResource("3")
+region_enabled = true
+region_rect = Rect2(0, 0, 18, 124)
+
+[node name="PathHorizontal" type="Sprite2D" parent="."]
+z_index = -1
+texture_repeat = 2
+centered = false
+position = Vector2(36, 80)
+texture = ExtResource("3")
+region_enabled = true
+region_rect = Rect2(0, 0, 128, 18)
+
+[node name="FenceTop" type="Sprite2D" parent="."]
+texture_repeat = 2
+centered = false
+texture = ExtResource("2")
+region_enabled = true
+region_rect = Rect2(0, 0, 320, 16)
+
+[node name="FenceBottom" type="Sprite2D" parent="."]
+texture_repeat = 2
+centered = false
+position = Vector2(0, 164)
+texture = ExtResource("2")
+region_enabled = true
+region_rect = Rect2(0, 0, 320, 16)
+
+[node name="FenceLeft" type="Sprite2D" parent="."]
+texture_repeat = 2
+centered = false
+texture = ExtResource("2")
+region_enabled = true
+region_rect = Rect2(0, 0, 16, 180)
+
+[node name="FenceRight" type="Sprite2D" parent="."]
+texture_repeat = 2
+centered = false
+position = Vector2(304, 0)
+texture = ExtResource("2")
+region_enabled = true
+region_rect = Rect2(0, 0, 16, 180)
+
+[node name="Fences" type="StaticBody2D" parent="."]
+
+[node name="Top" type="CollisionShape2D" parent="Fences"]
+position = Vector2(160, 8)
+shape = SubResource("FenceHorizontal")
+
+[node name="Bottom" type="CollisionShape2D" parent="Fences"]
+position = Vector2(160, 172)
+shape = SubResource("FenceHorizontal")
+
+[node name="Left" type="CollisionShape2D" parent="Fences"]
+position = Vector2(8, 90)
+shape = SubResource("FenceVertical")
+
+[node name="Right" type="CollisionShape2D" parent="Fences"]
+position = Vector2(312, 90)
+shape = SubResource("FenceVertical")
+
+[node name="TrashContainer" parent="." instance=ExtResource("10")]
+position = Vector2(44, 86)
+
+[node name="DoorToHouse" parent="." instance=ExtResource("11")]
+position = Vector2(160, 30)
+target_scene = "res://scenes/House.tscn"
+target_spawn = Vector2(44, 118)
+
+[node name="Player" parent="." instance=ExtResource("4")]
+position = Vector2(160, 140)
+
+[node name="Camera2D" type="Camera2D" parent="."]
+position = Vector2(160, 90)
+
+[node name="TouchControls" parent="." instance=ExtResource("5")]
+
+[node name="DialogueBox" parent="." instance=ExtResource("6")]
+
+[node name="ItemPopup" parent="." instance=ExtResource("7")]
+
+[node name="InventoryPanel" parent="." instance=ExtResource("8")]
+
+[node name="QuestLog" parent="." instance=ExtResource("9")]

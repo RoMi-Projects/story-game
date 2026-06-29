@@ -55,6 +55,52 @@ PALETTE = {
     "angry_red": (214, 66, 54, 255),
     "blush": (232, 122, 112, 255),
     "mouth": (122, 52, 52, 255),
+    "wood": (150, 104, 62, 255),
+    "wood_dark": (114, 78, 46, 255),
+    "wood_light": (180, 134, 86, 255),
+    "counter_top": (208, 208, 216, 255),
+    "counter_top_dark": (168, 168, 180, 255),
+    "metal": (176, 182, 192, 255),
+    "stove": (62, 64, 72, 255),
+    "stove_dark": (44, 46, 54, 255),
+    "sofa": (148, 98, 66, 255),
+    "sofa_dark": (116, 74, 48, 255),
+    "sofa_light": (176, 124, 86, 255),
+    "rug": (170, 70, 70, 255),
+    "rug_border": (226, 208, 170, 255),
+    "rug_accent": (120, 44, 44, 255),
+    "glass": (152, 198, 224, 255),
+    "glass_light": (192, 224, 242, 255),
+    "frame": (158, 112, 66, 255),
+    "frame_dark": (118, 82, 48, 255),
+    "gold": (212, 178, 98, 255),
+    "gold_dark": (168, 138, 70, 255),
+    "wall_mat": (226, 220, 208, 255),
+    "trash": (112, 122, 118, 255),
+    "trash_dark": (84, 92, 90, 255),
+    "trash_lid": (94, 102, 100, 255),
+    "marker_bg": (250, 238, 168, 255),
+    "marker_outline": (66, 52, 42, 255),
+    "marker_red": (212, 72, 58, 255),
+    "check": (86, 178, 94, 255),
+    "check_dark": (62, 140, 72, 255),
+    "heart": (226, 84, 98, 255),
+    "heart_light": (244, 142, 152, 255),
+    "lips": (204, 92, 96, 255),
+    "path": (172, 134, 90, 255),
+    "path_dark": (146, 110, 72, 255),
+    "fence": (162, 122, 76, 255),
+    "fence_dark": (120, 86, 52, 255),
+    "dumpster": (78, 134, 94, 255),
+    "dumpster_dark": (58, 106, 72, 255),
+    "dumpster_lid": (98, 152, 112, 255),
+    "wheel": (48, 50, 56, 255),
+    "trash_bag": (66, 70, 78, 255),
+    "trash_bag_dark": (46, 50, 58, 255),
+    "trash_bag_light": (94, 98, 108, 255),
+    "sparkle": (250, 250, 240, 255),
+    "star": (242, 200, 72, 255),
+    "star_light": (252, 230, 132, 255),
 }
 
 
@@ -259,17 +305,79 @@ def _draw_desi_legs(pixels):
     fill_rect(pixels, 8, 23, 10, 23, PALETTE["shoe"])
 
 
-def draw_desi_portrait():
+def _new_portrait():
     image = new_image(32, 32)
     pixels = image.load()
     fill_rect(pixels, 0, 0, 31, 31, PALETTE["portrait_back"])
     _draw_portrait_hair(pixels)
     _draw_portrait_face(pixels)
+    return image, pixels
+
+
+def draw_desi_portrait():
+    image, pixels = _new_portrait()
     _draw_angry_brows(pixels)
     _draw_glaring_eyes(pixels)
     _draw_angry_mouth(pixels)
     _draw_anger_mark(pixels)
     return image
+
+
+def draw_desi_kiss():
+    image, pixels = _new_portrait()
+    _draw_happy_eyes(pixels)
+    _draw_kiss_mouth(pixels)
+    _draw_strong_blush(pixels)
+    _draw_floating_heart(pixels, 24, 4)
+    return image
+
+
+def draw_desi_wink():
+    image, pixels = _new_portrait()
+    _draw_wink_eyes(pixels)
+    _draw_smile_mouth(pixels)
+    pixels[22, 14] = PALETTE["sparkle"]
+    pixels[23, 13] = PALETTE["sparkle"]
+    return image
+
+
+def _draw_happy_eyes(pixels):
+    left = [(10, 16), (11, 15), (12, 15), (13, 16)]
+    right = [(18, 16), (19, 15), (20, 15), (21, 16)]
+    for x, y in left + right:
+        pixels[x, y] = PALETTE["outline"]
+
+
+def _draw_kiss_mouth(pixels):
+    fill_rect(pixels, 14, 22, 17, 24, PALETTE["lips"])
+    pixels[15, 23] = PALETTE["mouth"]
+    pixels[16, 23] = PALETTE["mouth"]
+
+
+def _draw_strong_blush(pixels):
+    fill_rect(pixels, 6, 18, 8, 21, PALETTE["blush"])
+    fill_rect(pixels, 23, 18, 25, 21, PALETTE["blush"])
+
+
+def _draw_wink_eyes(pixels):
+    fill_rect(pixels, 10, 16, 13, 18, PALETTE["eye_white"])
+    fill_rect(pixels, 11, 16, 12, 17, PALETTE["outline"])
+    for x, y in [(18, 17), (19, 16), (20, 16), (21, 17)]:
+        pixels[x, y] = PALETTE["outline"]
+
+
+def _draw_smile_mouth(pixels):
+    for x, y in [(13, 23), (14, 24), (15, 24), (16, 24), (17, 24), (18, 23)]:
+        pixels[x, y] = PALETTE["mouth"]
+
+
+def _draw_floating_heart(pixels, left, top):
+    fill_rect(pixels, left, top + 1, left + 1, top + 2, PALETTE["heart"])
+    fill_rect(pixels, left + 3, top + 1, left + 4, top + 2, PALETTE["heart"])
+    fill_rect(pixels, left, top + 2, left + 4, top + 3, PALETTE["heart"])
+    fill_rect(pixels, left + 1, top + 4, left + 3, top + 4, PALETTE["heart"])
+    pixels[left + 2, top + 5] = PALETTE["heart"]
+    pixels[left + 1, top + 1] = PALETTE["heart_light"]
 
 
 def _draw_portrait_hair(pixels):
@@ -310,6 +418,319 @@ def _draw_anger_mark(pixels):
     marks = [(26, 4), (24, 6), (28, 6), (26, 7), (25, 5), (27, 5)]
     for x, y in marks:
         pixels[x, y] = PALETTE["angry_red"]
+
+
+# --- furniture (each is one placeable unit) ------------------------------------
+
+def draw_kitchen_counter():
+    image = new_image(48, 28)
+    pixels = image.load()
+    fill_rect(pixels, 0, 4, 47, 27, PALETTE["wood"])
+    fill_rect(pixels, 0, 0, 47, 2, PALETTE["counter_top"])
+    fill_rect(pixels, 0, 3, 47, 3, PALETTE["counter_top_dark"])
+    fill_rect(pixels, 0, 4, 47, 6, PALETTE["stove"])
+    for x in (6, 12, 35, 41):
+        pixels[x, 5] = PALETTE["metal"]
+    _draw_oven(pixels)
+    _draw_cabinet_door(pixels, 2, 9, 13, 25)
+    _draw_cabinet_door(pixels, 34, 9, 45, 25)
+    return image
+
+
+def _draw_oven(pixels):
+    fill_rect(pixels, 16, 8, 31, 26, PALETTE["stove_dark"])
+    fill_rect(pixels, 18, 11, 29, 20, PALETTE["stove"])
+    fill_rect(pixels, 19, 12, 28, 15, PALETTE["glass"])
+    fill_rect(pixels, 18, 9, 29, 9, PALETTE["metal"])
+    fill_rect(pixels, 18, 23, 29, 24, PALETTE["metal"])
+
+
+def _draw_cabinet_door(pixels, left, top, right, bottom):
+    fill_rect(pixels, left, top, right, bottom, PALETTE["wood_dark"])
+    fill_rect(pixels, left + 1, top + 1, right - 1, bottom - 1, PALETTE["wood_light"])
+    fill_rect(pixels, right - 2, (top + bottom) // 2, right - 1,
+              (top + bottom) // 2, PALETTE["wood_dark"])
+
+
+def draw_dining_table():
+    image = new_image(32, 22)
+    pixels = image.load()
+    fill_rect(pixels, 3, 8, 4, 21, PALETTE["wood_dark"])
+    fill_rect(pixels, 27, 8, 28, 21, PALETTE["wood_dark"])
+    fill_rect(pixels, 2, 8, 29, 10, PALETTE["wood_dark"])
+    fill_rect(pixels, 0, 2, 31, 7, PALETTE["wood_light"])
+    fill_rect(pixels, 0, 2, 31, 2, PALETTE["wood"])
+    fill_rect(pixels, 0, 7, 31, 7, PALETTE["wood_dark"])
+    return image
+
+
+def draw_trash_can():
+    image = new_image(14, 20)
+    pixels = image.load()
+    fill_rect(pixels, 1, 4, 12, 19, PALETTE["trash"])
+    for x in (4, 7, 10):
+        fill_rect(pixels, x, 5, x, 18, PALETTE["trash_dark"])
+    fill_rect(pixels, 0, 2, 13, 4, PALETTE["trash_lid"])
+    fill_rect(pixels, 5, 0, 8, 1, PALETTE["trash_dark"])
+    fill_rect(pixels, 1, 19, 12, 19, PALETTE["trash_dark"])
+    return image
+
+
+def draw_sofa():
+    image = new_image(44, 24)
+    pixels = image.load()
+    fill_rect(pixels, 4, 2, 39, 12, PALETTE["sofa"])
+    fill_rect(pixels, 4, 2, 39, 3, PALETTE["sofa_light"])
+    fill_rect(pixels, 0, 6, 6, 22, PALETTE["sofa_dark"])
+    fill_rect(pixels, 37, 6, 43, 22, PALETTE["sofa_dark"])
+    fill_rect(pixels, 7, 12, 21, 20, PALETTE["sofa_light"])
+    fill_rect(pixels, 22, 12, 36, 20, PALETTE["sofa_light"])
+    fill_rect(pixels, 21, 12, 22, 20, PALETTE["sofa_dark"])
+    fill_rect(pixels, 6, 22, 10, 23, PALETTE["wood_dark"])
+    fill_rect(pixels, 33, 22, 37, 23, PALETTE["wood_dark"])
+    return image
+
+
+def draw_rug():
+    image = new_image(48, 32)
+    pixels = image.load()
+    fill_rect(pixels, 0, 0, 47, 31, PALETTE["rug_border"])
+    fill_rect(pixels, 3, 3, 44, 28, PALETTE["rug"])
+    fill_rect(pixels, 6, 6, 41, 25, PALETTE["rug"])
+    _draw_rectangle_outline(pixels, 6, 6, 41, 25, PALETTE["rug_accent"])
+    _draw_rug_diamond(pixels)
+    return image
+
+
+def _draw_rectangle_outline(pixels, left, top, right, bottom, color):
+    fill_rect(pixels, left, top, right, top, color)
+    fill_rect(pixels, left, bottom, right, bottom, color)
+    fill_rect(pixels, left, top, left, bottom, color)
+    fill_rect(pixels, right, top, right, bottom, color)
+
+
+def _draw_rug_diamond(pixels):
+    center_x, center_y = 23, 15
+    for offset in range(5):
+        fill_rect(pixels, center_x - offset, center_y - 4 + offset,
+                  center_x + offset, center_y - 4 + offset, PALETTE["rug_border"])
+    for offset in range(5):
+        fill_rect(pixels, center_x - 4 + offset, center_y + offset,
+                  center_x + 4 - offset, center_y + offset, PALETTE["rug_border"])
+
+
+def draw_coffee_table():
+    image = new_image(24, 14)
+    pixels = image.load()
+    fill_rect(pixels, 2, 6, 4, 13, PALETTE["wood_dark"])
+    fill_rect(pixels, 19, 6, 21, 13, PALETTE["wood_dark"])
+    fill_rect(pixels, 0, 2, 23, 5, PALETTE["wood_light"])
+    fill_rect(pixels, 0, 2, 23, 2, PALETTE["wood"])
+    fill_rect(pixels, 0, 5, 23, 5, PALETTE["wood_dark"])
+    fill_rect(pixels, 9, 0, 11, 1, PALETTE["rug"])
+    return image
+
+
+def draw_window():
+    image = new_image(24, 20)
+    pixels = image.load()
+    fill_rect(pixels, 0, 0, 23, 19, PALETTE["frame"])
+    fill_rect(pixels, 2, 2, 21, 16, PALETTE["glass"])
+    fill_rect(pixels, 2, 2, 21, 8, PALETTE["glass_light"])
+    fill_rect(pixels, 11, 2, 12, 16, PALETTE["frame"])
+    fill_rect(pixels, 2, 8, 21, 9, PALETTE["frame"])
+    fill_rect(pixels, 0, 17, 23, 19, PALETTE["frame_dark"])
+    return image
+
+
+def draw_wall_portrait():
+    image = new_image(20, 26)
+    pixels = image.load()
+    fill_rect(pixels, 0, 0, 19, 25, PALETTE["gold"])
+    fill_rect(pixels, 1, 1, 18, 24, PALETTE["gold_dark"])
+    fill_rect(pixels, 3, 3, 16, 22, PALETTE["wall_mat"])
+    _draw_portrait_bust(pixels)
+    return image
+
+
+def _draw_portrait_bust(pixels):
+    fill_rect(pixels, 6, 6, 13, 7, PALETTE["hat_shadow"])
+    fill_rect(pixels, 7, 4, 12, 6, PALETTE["hat"])
+    fill_rect(pixels, 7, 8, 12, 12, PALETTE["skin"])
+    pixels[8, 10] = PALETTE["outline"]
+    pixels[11, 10] = PALETTE["outline"]
+    fill_rect(pixels, 6, 13, 13, 21, PALETTE["shirt"])
+    fill_rect(pixels, 6, 13, 6, 21, PALETTE["shirt_shadow"])
+
+
+# --- player carrying a trash bag -----------------------------------------------
+
+def draw_player_carry_spritesheet():
+    rows = ["down", "up", "left", "right"]
+    sheet = new_image(FRAME_WIDTH * WALK_FRAME_COUNT, FRAME_HEIGHT * len(rows))
+    for row_index, facing in enumerate(rows):
+        for frame in range(WALK_FRAME_COUNT):
+            cell = _draw_character(facing, frame)
+            _draw_held_bag(cell.load())
+            sheet.paste(cell, (frame * FRAME_WIDTH, row_index * FRAME_HEIGHT))
+    return sheet
+
+
+def _draw_held_bag(pixels):
+    fill_rect(pixels, 4, 16, 11, 21, PALETTE["trash_bag"])
+    fill_rect(pixels, 5, 14, 10, 16, PALETTE["trash_bag"])
+    fill_rect(pixels, 6, 12, 9, 13, PALETTE["trash_bag_dark"])
+    fill_rect(pixels, 5, 16, 6, 19, PALETTE["trash_bag_light"])
+    fill_rect(pixels, 4, 15, 5, 16, PALETTE["skin"])
+    fill_rect(pixels, 10, 15, 11, 16, PALETTE["skin"])
+
+
+# --- quest markers and heart ---------------------------------------------------
+
+def draw_marker_exclaim():
+    image = new_image(14, 18)
+    pixels = image.load()
+    fill_rect(pixels, 1, 1, 12, 11, PALETTE["marker_bg"])
+    _draw_rectangle_outline(pixels, 1, 1, 12, 11, PALETTE["marker_outline"])
+    fill_rect(pixels, 5, 12, 8, 12, PALETTE["marker_bg"])
+    fill_rect(pixels, 6, 13, 7, 14, PALETTE["marker_bg"])
+    pixels[5, 12] = PALETTE["marker_outline"]
+    pixels[8, 12] = PALETTE["marker_outline"]
+    pixels[6, 14] = PALETTE["marker_outline"]
+    pixels[7, 14] = PALETTE["marker_outline"]
+    fill_rect(pixels, 6, 3, 7, 7, PALETTE["marker_red"])
+    fill_rect(pixels, 6, 9, 7, 10, PALETTE["marker_red"])
+    return image
+
+
+def draw_marker_check():
+    image = new_image(16, 16)
+    pixels = image.load()
+    fill_rect(pixels, 3, 4, 12, 11, PALETTE["check"])
+    fill_rect(pixels, 4, 2, 11, 13, PALETTE["check"])
+    _draw_rectangle_outline(pixels, 4, 2, 11, 13, PALETTE["check_dark"])
+    _draw_rectangle_outline(pixels, 3, 4, 12, 11, PALETTE["check_dark"])
+    for x, y in [(5, 8), (6, 9), (7, 10), (8, 9), (9, 7), (10, 5)]:
+        pixels[x, y] = PALETTE["sparkle"]
+    return image
+
+
+def draw_heart():
+    image = new_image(12, 12)
+    pixels = image.load()
+    rows = {
+        2: [(2, 3), (8, 9)],
+        3: [(1, 4), (7, 10)],
+        4: [(1, 10)],
+        5: [(1, 10)],
+        6: [(2, 9)],
+        7: [(3, 8)],
+        8: [(4, 7)],
+        9: [(5, 6)],
+    }
+    for y, spans in rows.items():
+        for left, right in spans:
+            fill_rect(pixels, left, y, right, y, PALETTE["heart"])
+    pixels[3, 3] = PALETTE["heart_light"]
+    pixels[4, 4] = PALETTE["heart_light"]
+    return image
+
+
+# --- inventory item icons ------------------------------------------------------
+
+def draw_trash_bag():
+    image = new_image(12, 14)
+    pixels = image.load()
+    fill_rect(pixels, 2, 4, 9, 12, PALETTE["trash_bag"])
+    fill_rect(pixels, 1, 6, 10, 12, PALETTE["trash_bag"])
+    fill_rect(pixels, 3, 2, 8, 4, PALETTE["trash_bag_dark"])
+    fill_rect(pixels, 4, 1, 7, 2, PALETTE["trash_bag"])
+    fill_rect(pixels, 3, 6, 4, 10, PALETTE["trash_bag_light"])
+    fill_rect(pixels, 1, 12, 10, 12, PALETTE["trash_bag_dark"])
+    return image
+
+
+def draw_star():
+    image = new_image(11, 11)
+    pixels = image.load()
+    rows = {
+        0: [(5, 5)],
+        1: [(4, 6)],
+        2: [(4, 6)],
+        3: [(0, 10)],
+        4: [(2, 8)],
+        5: [(3, 7)],
+        6: [(3, 7)],
+        7: [(2, 3), (7, 8)],
+        8: [(1, 2), (8, 9)],
+    }
+    for y, spans in rows.items():
+        for left, right in spans:
+            fill_rect(pixels, left, y, right, y, PALETTE["star"])
+    pixels[5, 2] = PALETTE["star_light"]
+    pixels[5, 4] = PALETTE["star_light"]
+    return image
+
+
+# --- garden --------------------------------------------------------------------
+
+def draw_garden_grass():
+    image = new_image(TILE_SIZE, TILE_SIZE)
+    pixels = image.load()
+    fill_rect(pixels, 0, 0, TILE_SIZE - 1, TILE_SIZE - 1, PALETTE["grass"])
+    for x, y in [(2, 4), (3, 3), (7, 6), (8, 5), (12, 9), (13, 8), (5, 12), (10, 13)]:
+        fill_rect(pixels, x, y - 1, x, y, PALETTE["grass_dark"])
+    return image
+
+
+def draw_garden_path():
+    image = new_image(TILE_SIZE, TILE_SIZE)
+    pixels = image.load()
+    fill_rect(pixels, 0, 0, TILE_SIZE - 1, TILE_SIZE - 1, PALETTE["path"])
+    for x, y in [(2, 2), (6, 4), (11, 3), (14, 7), (4, 9), (9, 11), (13, 13), (3, 13)]:
+        pixels[x, y] = PALETTE["path_dark"]
+    return image
+
+
+def draw_fence():
+    image = new_image(TILE_SIZE, TILE_SIZE)
+    pixels = image.load()
+    for post in (2, 11):
+        fill_rect(pixels, post, 0, post + 1, 15, PALETTE["fence"])
+        fill_rect(pixels, post, 14, post + 1, 15, PALETTE["fence_dark"])
+    fill_rect(pixels, 0, 3, 15, 5, PALETTE["fence"])
+    fill_rect(pixels, 0, 10, 15, 12, PALETTE["fence"])
+    fill_rect(pixels, 0, 5, 15, 5, PALETTE["fence_dark"])
+    fill_rect(pixels, 0, 12, 15, 12, PALETTE["fence_dark"])
+    return image
+
+
+def draw_trash_container():
+    image = new_image(32, 34)
+    pixels = image.load()
+    fill_rect(pixels, 13, 1, 18, 3, PALETTE["dumpster_dark"])
+    fill_rect(pixels, 1, 3, 30, 9, PALETTE["dumpster_lid"])
+    fill_rect(pixels, 1, 3, 30, 3, PALETTE["dumpster_dark"])
+    fill_rect(pixels, 2, 9, 29, 30, PALETTE["dumpster"])
+    fill_rect(pixels, 2, 9, 3, 30, PALETTE["dumpster_dark"])
+    fill_rect(pixels, 28, 9, 29, 30, PALETTE["dumpster_dark"])
+    fill_rect(pixels, 2, 19, 29, 20, PALETTE["dumpster_dark"])
+    fill_rect(pixels, 12, 12, 19, 17, PALETTE["dumpster_lid"])
+    fill_rect(pixels, 5, 31, 9, 33, PALETTE["wheel"])
+    fill_rect(pixels, 22, 31, 26, 33, PALETTE["wheel"])
+    return image
+
+
+def draw_door():
+    image = new_image(24, 28)
+    pixels = image.load()
+    fill_rect(pixels, 0, 0, 23, 27, PALETTE["wood_dark"])
+    fill_rect(pixels, 2, 2, 21, 27, PALETTE["wood"])
+    fill_rect(pixels, 2, 2, 21, 2, PALETTE["wood_light"])
+    _draw_rectangle_outline(pixels, 4, 4, 19, 12, PALETTE["wood_dark"])
+    _draw_rectangle_outline(pixels, 4, 15, 19, 24, PALETTE["wood_dark"])
+    fill_rect(pixels, 17, 14, 18, 16, PALETTE["gold"])
+    return image
 
 
 # --- application icon ----------------------------------------------------------
@@ -356,6 +777,27 @@ def main():
     save(draw_player_spritesheet(), "player_spritesheet.png", directory)
     save(draw_desi_sprite(), "desi.png", directory)
     save(draw_desi_portrait(), "desi_portrait.png", directory)
+    save(draw_desi_kiss(), "desi_kiss.png", directory)
+    save(draw_desi_wink(), "desi_wink.png", directory)
+    save(draw_player_carry_spritesheet(), "player_carry_spritesheet.png", directory)
+    save(draw_marker_exclaim(), "marker_exclaim.png", directory)
+    save(draw_marker_check(), "marker_check.png", directory)
+    save(draw_heart(), "heart.png", directory)
+    save(draw_trash_bag(), "trash_bag.png", directory)
+    save(draw_star(), "star.png", directory)
+    save(draw_garden_grass(), "garden_grass.png", directory)
+    save(draw_garden_path(), "garden_path.png", directory)
+    save(draw_fence(), "fence.png", directory)
+    save(draw_trash_container(), "trash_container.png", directory)
+    save(draw_door(), "door.png", directory)
+    save(draw_kitchen_counter(), "kitchen_counter.png", directory)
+    save(draw_dining_table(), "dining_table.png", directory)
+    save(draw_trash_can(), "trash_can.png", directory)
+    save(draw_sofa(), "sofa.png", directory)
+    save(draw_rug(), "rug.png", directory)
+    save(draw_coffee_table(), "coffee_table.png", directory)
+    save(draw_window(), "window.png", directory)
+    save(draw_wall_portrait(), "wall_portrait.png", directory)
     save(draw_icon(), "icon.png", directory)
 
 

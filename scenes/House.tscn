@@ -1,0 +1,166 @@
+[gd_scene load_steps=22 format=3]
+
+[ext_resource type="Texture2D" path="res://assets/floor_tile.png" id="1"]
+[ext_resource type="Texture2D" path="res://assets/wall_tile.png" id="2"]
+[ext_resource type="PackedScene" path="res://scenes/Player.tscn" id="3"]
+[ext_resource type="PackedScene" path="res://scenes/TouchControls.tscn" id="4"]
+[ext_resource type="PackedScene" path="res://scenes/Desi.tscn" id="5"]
+[ext_resource type="PackedScene" path="res://scenes/DialogueBox.tscn" id="6"]
+[ext_resource type="PackedScene" path="res://scenes/PlaceableItem.tscn" id="7"]
+[ext_resource type="PackedScene" path="res://scenes/ItemPopup.tscn" id="8"]
+[ext_resource type="PackedScene" path="res://scenes/InventoryPanel.tscn" id="9"]
+[ext_resource type="Texture2D" path="res://assets/kitchen_counter.png" id="10"]
+[ext_resource type="Texture2D" path="res://assets/dining_table.png" id="11"]
+[ext_resource type="Texture2D" path="res://assets/sofa.png" id="12"]
+[ext_resource type="Texture2D" path="res://assets/rug.png" id="13"]
+[ext_resource type="Texture2D" path="res://assets/coffee_table.png" id="14"]
+[ext_resource type="Texture2D" path="res://assets/window.png" id="15"]
+[ext_resource type="Texture2D" path="res://assets/wall_portrait.png" id="16"]
+[ext_resource type="PackedScene" path="res://scenes/TrashCan.tscn" id="17"]
+[ext_resource type="PackedScene" path="res://scenes/Door.tscn" id="18"]
+[ext_resource type="PackedScene" path="res://scenes/QuestLog.tscn" id="19"]
+
+[sub_resource type="RectangleShape2D" id="WallHorizontal"]
+size = Vector2(320, 16)
+
+[sub_resource type="RectangleShape2D" id="WallVertical"]
+size = Vector2(16, 180)
+
+[node name="House" type="Node2D"]
+y_sort_enabled = true
+
+[node name="Floor" type="Sprite2D" parent="."]
+z_index = -2
+texture_repeat = 2
+centered = false
+texture = ExtResource("1")
+region_enabled = true
+region_rect = Rect2(0, 0, 320, 180)
+
+[node name="WallTop" type="Sprite2D" parent="."]
+texture_repeat = 2
+centered = false
+texture = ExtResource("2")
+region_enabled = true
+region_rect = Rect2(0, 0, 320, 16)
+
+[node name="WallBottom" type="Sprite2D" parent="."]
+texture_repeat = 2
+centered = false
+position = Vector2(0, 164)
+texture = ExtResource("2")
+region_enabled = true
+region_rect = Rect2(0, 0, 320, 16)
+
+[node name="WallLeft" type="Sprite2D" parent="."]
+texture_repeat = 2
+centered = false
+texture = ExtResource("2")
+region_enabled = true
+region_rect = Rect2(0, 0, 16, 180)
+
+[node name="WallRight" type="Sprite2D" parent="."]
+texture_repeat = 2
+centered = false
+position = Vector2(304, 0)
+texture = ExtResource("2")
+region_enabled = true
+region_rect = Rect2(0, 0, 16, 180)
+
+[node name="Walls" type="StaticBody2D" parent="."]
+
+[node name="Top" type="CollisionShape2D" parent="Walls"]
+position = Vector2(160, 8)
+shape = SubResource("WallHorizontal")
+
+[node name="Bottom" type="CollisionShape2D" parent="Walls"]
+position = Vector2(160, 172)
+shape = SubResource("WallHorizontal")
+
+[node name="Left" type="CollisionShape2D" parent="Walls"]
+position = Vector2(8, 90)
+shape = SubResource("WallVertical")
+
+[node name="Right" type="CollisionShape2D" parent="Walls"]
+position = Vector2(312, 90)
+shape = SubResource("WallVertical")
+
+[node name="Rug" parent="." instance=ExtResource("7")]
+position = Vector2(236, 110)
+z_index = -1
+item_name = "Cozy Rug"
+description = "It really ties the room together."
+texture = ExtResource("13")
+solid = false
+
+[node name="WindowLeft" parent="." instance=ExtResource("7")]
+position = Vector2(96, 14)
+item_name = "Window"
+description = "A lovely view of the great outdoors, smudges and all."
+texture = ExtResource("15")
+solid = false
+
+[node name="WindowRight" parent="." instance=ExtResource("7")]
+position = Vector2(224, 14)
+item_name = "Window"
+description = "A lovely view of the great outdoors, smudges and all."
+texture = ExtResource("15")
+solid = false
+
+[node name="WallPortrait" parent="." instance=ExtResource("7")]
+position = Vector2(160, 15)
+item_name = "Self Portrait"
+description = "Roberto, looking suspiciously heroic."
+texture = ExtResource("16")
+solid = false
+
+[node name="KitchenCounter" parent="." instance=ExtResource("7")]
+position = Vector2(62, 42)
+item_name = "Kitchen Counter"
+description = "Where culinary dreams meet last night's unwashed dishes."
+texture = ExtResource("10")
+
+[node name="DiningTable" parent="." instance=ExtResource("7")]
+position = Vector2(66, 100)
+item_name = "Dining Table"
+description = "Solid oak. Survived three dinner parties and one table-flip."
+texture = ExtResource("11")
+
+[node name="Sofa" parent="." instance=ExtResource("7")]
+position = Vector2(236, 96)
+item_name = "Comfy Old Sofa"
+description = "Springs included, comfort optional. Naps strongly encouraged."
+texture = ExtResource("12")
+
+[node name="CoffeeTable" parent="." instance=ExtResource("7")]
+position = Vector2(236, 122)
+item_name = "Little Coffee Table"
+description = "Perfectly sized for snacks you will later regret."
+texture = ExtResource("14")
+
+[node name="TrashCan" parent="." instance=ExtResource("17")]
+position = Vector2(104, 46)
+
+[node name="DoorToGarden" parent="." instance=ExtResource("18")]
+position = Vector2(44, 150)
+target_scene = "res://scenes/Garden.tscn"
+target_spawn = Vector2(160, 140)
+
+[node name="Player" parent="." instance=ExtResource("3")]
+position = Vector2(160, 84)
+
+[node name="Desi" parent="." instance=ExtResource("5")]
+position = Vector2(160, 132)
+
+[node name="Camera2D" type="Camera2D" parent="."]
+position = Vector2(160, 90)
+
+[node name="TouchControls" parent="." instance=ExtResource("4")]
+
+[node name="DialogueBox" parent="." instance=ExtResource("6")]
+
+[node name="ItemPopup" parent="." instance=ExtResource("8")]
+
+[node name="InventoryPanel" parent="." instance=ExtResource("9")]
+
+[node name="QuestLog" parent="." instance=ExtResource("19")]

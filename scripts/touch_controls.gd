@@ -11,6 +11,9 @@ extends CanvasLayer
 	$DPad/Left: "move_left",
 	$DPad/Right: "move_right",
 	$DPad/Action: "interact",
+	$DPad/Pickup: "pickup",
+	$DPad/Inventory: "toggle_inventory",
+	$DPad/Quests: "toggle_quests",
 }
 
 

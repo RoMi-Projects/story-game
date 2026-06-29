@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" path="res://scripts/npc.gd" id="1"]
 [ext_resource type="Texture2D" path="res://assets/desi.png" id="2"]
-[ext_resource type="Texture2D" path="res://assets/desi_portrait.png" id="3"]
+[ext_resource type="PackedScene" path="res://scenes/QuestMarker.tscn" id="3"]
 
 [sub_resource type="RectangleShape2D" id="BodyShape"]
 size = Vector2(12, 8)
@@ -12,9 +12,6 @@ size = Vector2(44, 44)
 
 [node name="Desi" type="StaticBody2D"]
 script = ExtResource("1")
-speaker_name = "Desi"
-message = "You need to throw the trash, Roberto! When was the last time you went?"
-portrait = ExtResource("3")
 
 [node name="Sprite" type="Sprite2D" parent="."]
 texture = ExtResource("2")
@@ -28,3 +25,9 @@ shape = SubResource("BodyShape")
 [node name="AreaShape" type="CollisionShape2D" parent="InteractionArea"]
 position = Vector2(0, 4)
 shape = SubResource("AreaShape")
+
+[node name="QuestMarker" parent="." instance=ExtResource("3")]
+position = Vector2(0, -18)
+
+[node name="Heart" type="Sprite2D" parent="."]
+position = Vector2(9, -16)
