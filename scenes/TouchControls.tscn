@@ -1,0 +1,54 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/touch_controls.gd" id="1"]
+
+[node name="TouchControls" type="CanvasLayer"]
+script = ExtResource("1")
+
+[node name="DPad" type="Control" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="Up" type="Button" parent="DPad"]
+layout_mode = 1
+offset_left = 34.0
+offset_top = 100.0
+offset_right = 60.0
+offset_bottom = 126.0
+text = "▲"
+
+[node name="Left" type="Button" parent="DPad"]
+layout_mode = 1
+offset_left = 8.0
+offset_top = 126.0
+offset_right = 34.0
+offset_bottom = 152.0
+text = "◀"
+
+[node name="Right" type="Button" parent="DPad"]
+layout_mode = 1
+offset_left = 60.0
+offset_top = 126.0
+offset_right = 86.0
+offset_bottom = 152.0
+text = "▶"
+
+[node name="Down" type="Button" parent="DPad"]
+layout_mode = 1
+offset_left = 34.0
+offset_top = 152.0
+offset_right = 60.0
+offset_bottom = 178.0
+text = "▼"
+
+[node name="Action" type="Button" parent="DPad"]
+layout_mode = 1
+offset_left = 274.0
+offset_top = 138.0
+offset_right = 314.0
+offset_bottom = 178.0
+text = "A"

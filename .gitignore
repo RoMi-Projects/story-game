@@ -1,0 +1,11 @@
+# Godot 4 editor/import cache (regenerated automatically)
+.godot/
+
+# Exported builds
+/build/
+/export/
+*.dmg
+*.app
+*.exe
+*.pck
+*.zip
