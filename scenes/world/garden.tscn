@@ -3,20 +3,20 @@
 [ext_resource type="Texture2D" path="res://assets/garden_grass.png" id="1"]
 [ext_resource type="Texture2D" path="res://assets/fence.png" id="2"]
 [ext_resource type="Texture2D" path="res://assets/garden_path.png" id="3"]
-[ext_resource type="PackedScene" path="res://scenes/Player.tscn" id="4"]
-[ext_resource type="PackedScene" path="res://scenes/TouchControls.tscn" id="5"]
-[ext_resource type="PackedScene" path="res://scenes/DialogueBox.tscn" id="6"]
-[ext_resource type="PackedScene" path="res://scenes/ItemPopup.tscn" id="7"]
-[ext_resource type="PackedScene" path="res://scenes/InventoryPanel.tscn" id="8"]
-[ext_resource type="PackedScene" path="res://scenes/QuestLog.tscn" id="9"]
-[ext_resource type="PackedScene" path="res://scenes/TrashContainer.tscn" id="10"]
-[ext_resource type="PackedScene" path="res://scenes/Door.tscn" id="11"]
-[ext_resource type="PackedScene" path="res://scenes/TrashPiece.tscn" id="12"]
-[ext_resource type="PackedScene" path="res://scenes/TrashCounter.tscn" id="13"]
+[ext_resource type="PackedScene" path="res://scenes/actors/player.tscn" id="4"]
+[ext_resource type="PackedScene" path="res://scenes/ui/touch_controls.tscn" id="5"]
+[ext_resource type="PackedScene" path="res://scenes/ui/dialogue_box.tscn" id="6"]
+[ext_resource type="PackedScene" path="res://scenes/ui/item_popup.tscn" id="7"]
+[ext_resource type="PackedScene" path="res://scenes/ui/inventory_panel.tscn" id="8"]
+[ext_resource type="PackedScene" path="res://scenes/ui/quest_log.tscn" id="9"]
+[ext_resource type="PackedScene" path="res://scenes/quest/trash_container.tscn" id="10"]
+[ext_resource type="PackedScene" path="res://scenes/world/door.tscn" id="11"]
+[ext_resource type="PackedScene" path="res://scenes/quest/trash_piece.tscn" id="12"]
+[ext_resource type="PackedScene" path="res://scenes/ui/trash_counter.tscn" id="13"]
 [ext_resource type="Texture2D" path="res://assets/trash_can_litter.png" id="14"]
 [ext_resource type="Texture2D" path="res://assets/trash_banana.png" id="15"]
 [ext_resource type="Texture2D" path="res://assets/trash_paper.png" id="16"]
-[ext_resource type="PackedScene" path="res://scenes/Mouse.tscn" id="17"]
+[ext_resource type="PackedScene" path="res://scenes/actors/mouse.tscn" id="17"]
 
 [sub_resource type="RectangleShape2D" id="FenceHorizontal"]
 size = Vector2(320, 16)
@@ -124,7 +124,7 @@ position = Vector2(244, 104)
 
 [node name="DoorToHouse" parent="." instance=ExtResource("11")]
 position = Vector2(160, 30)
-target_scene = "res://scenes/House.tscn"
+target_scene = "res://scenes/world/house.tscn"
 target_spawn = Vector2(44, 118)
 
 [node name="Player" parent="." instance=ExtResource("4")]

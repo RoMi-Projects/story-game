@@ -1,23 +1,23 @@
 [gd_scene load_steps=6 format=3]
 
-[ext_resource type="Script" path="res://scripts/trash_container.gd" id="1"]
-[ext_resource type="PackedScene" path="res://scenes/QuestMarker.tscn" id="2"]
-[ext_resource type="Texture2D" path="res://assets/trash_container.png" id="3"]
+[ext_resource type="Script" path="res://scripts/quest/trash_can.gd" id="1"]
+[ext_resource type="PackedScene" path="res://scenes/quest/quest_marker.tscn" id="2"]
+[ext_resource type="Texture2D" path="res://assets/trash_can.png" id="3"]
 
 [sub_resource type="RectangleShape2D" id="BodyShape"]
-size = Vector2(28, 20)
+size = Vector2(12, 10)
 
 [sub_resource type="RectangleShape2D" id="AreaShape"]
-size = Vector2(46, 48)
+size = Vector2(30, 34)
 
-[node name="TrashContainer" type="StaticBody2D"]
+[node name="TrashCan" type="StaticBody2D"]
 script = ExtResource("1")
 texture = ExtResource("3")
 
 [node name="Sprite" type="Sprite2D" parent="."]
 
 [node name="Collision" type="CollisionShape2D" parent="."]
-position = Vector2(0, 6)
+position = Vector2(0, 4)
 shape = SubResource("BodyShape")
 
 [node name="InteractionArea" type="Area2D" parent="."]
@@ -26,4 +26,4 @@ shape = SubResource("BodyShape")
 shape = SubResource("AreaShape")
 
 [node name="QuestMarker" parent="." instance=ExtResource("2")]
-position = Vector2(0, -22)
+position = Vector2(0, -16)

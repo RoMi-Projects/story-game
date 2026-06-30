@@ -1,6 +1,6 @@
 [gd_scene load_steps=5 format=3]
 
-[ext_resource type="Script" path="res://scripts/combat.gd" id="1"]
+[ext_resource type="Script" path="res://scripts/combat/combat.gd" id="1"]
 [ext_resource type="Texture2D" path="res://assets/combat_bg.png" id="2"]
 [ext_resource type="Texture2D" path="res://assets/mouse_battle.png" id="3"]
 [ext_resource type="Texture2D" path="res://assets/player_battle.png" id="4"]

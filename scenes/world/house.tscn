@@ -2,13 +2,13 @@
 
 [ext_resource type="Texture2D" path="res://assets/floor_tile.png" id="1"]
 [ext_resource type="Texture2D" path="res://assets/wall_tile.png" id="2"]
-[ext_resource type="PackedScene" path="res://scenes/Player.tscn" id="3"]
-[ext_resource type="PackedScene" path="res://scenes/TouchControls.tscn" id="4"]
-[ext_resource type="PackedScene" path="res://scenes/Desi.tscn" id="5"]
-[ext_resource type="PackedScene" path="res://scenes/DialogueBox.tscn" id="6"]
-[ext_resource type="PackedScene" path="res://scenes/PlaceableItem.tscn" id="7"]
-[ext_resource type="PackedScene" path="res://scenes/ItemPopup.tscn" id="8"]
-[ext_resource type="PackedScene" path="res://scenes/InventoryPanel.tscn" id="9"]
+[ext_resource type="PackedScene" path="res://scenes/actors/player.tscn" id="3"]
+[ext_resource type="PackedScene" path="res://scenes/ui/touch_controls.tscn" id="4"]
+[ext_resource type="PackedScene" path="res://scenes/actors/desi.tscn" id="5"]
+[ext_resource type="PackedScene" path="res://scenes/ui/dialogue_box.tscn" id="6"]
+[ext_resource type="PackedScene" path="res://scenes/world/placeable_item.tscn" id="7"]
+[ext_resource type="PackedScene" path="res://scenes/ui/item_popup.tscn" id="8"]
+[ext_resource type="PackedScene" path="res://scenes/ui/inventory_panel.tscn" id="9"]
 [ext_resource type="Texture2D" path="res://assets/kitchen_counter.png" id="10"]
 [ext_resource type="Texture2D" path="res://assets/dining_table.png" id="11"]
 [ext_resource type="Texture2D" path="res://assets/sofa.png" id="12"]
@@ -16,11 +16,11 @@
 [ext_resource type="Texture2D" path="res://assets/coffee_table.png" id="14"]
 [ext_resource type="Texture2D" path="res://assets/window.png" id="15"]
 [ext_resource type="Texture2D" path="res://assets/wall_portrait.png" id="16"]
-[ext_resource type="PackedScene" path="res://scenes/TrashCan.tscn" id="17"]
-[ext_resource type="PackedScene" path="res://scenes/Door.tscn" id="18"]
-[ext_resource type="PackedScene" path="res://scenes/QuestLog.tscn" id="19"]
-[ext_resource type="PackedScene" path="res://scenes/TrashPiece.tscn" id="20"]
-[ext_resource type="PackedScene" path="res://scenes/TrashCounter.tscn" id="21"]
+[ext_resource type="PackedScene" path="res://scenes/quest/trash_can.tscn" id="17"]
+[ext_resource type="PackedScene" path="res://scenes/world/door.tscn" id="18"]
+[ext_resource type="PackedScene" path="res://scenes/ui/quest_log.tscn" id="19"]
+[ext_resource type="PackedScene" path="res://scenes/quest/trash_piece.tscn" id="20"]
+[ext_resource type="PackedScene" path="res://scenes/ui/trash_counter.tscn" id="21"]
 [ext_resource type="Texture2D" path="res://assets/trash_banana.png" id="22"]
 [ext_resource type="Texture2D" path="res://assets/trash_can_litter.png" id="23"]
 [ext_resource type="Texture2D" path="res://assets/trash_paper.png" id="24"]
@@ -175,7 +175,7 @@ piece_id = "house_5"
 
 [node name="DoorToGarden" parent="." instance=ExtResource("18")]
 position = Vector2(44, 150)
-target_scene = "res://scenes/Garden.tscn"
+target_scene = "res://scenes/world/garden.tscn"
 target_spawn = Vector2(160, 140)
 
 [node name="Player" parent="." instance=ExtResource("3")]

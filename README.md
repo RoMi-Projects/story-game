@@ -8,36 +8,20 @@ generated from scratch.
 
 ## Project layout
 
+Code and scenes are grouped by **domain** inside `scripts/` and `scenes/`, with
+matching subfolders. File names are **snake_case** throughout.
+
 | Path | Purpose |
 | --- | --- |
 | `project.godot` | Godot project settings (rendering, input map, autoloads, main scene) |
-| `scenes/House.tscn` | The house: floor, walls, furniture, Desi, the trash can, the garden door |
-| `scenes/Garden.tscn` | The garden: grass, fence, path, the trash container, the door home |
-| `scenes/Player.tscn` | Character body, sprite, collision shape |
-| `scenes/TouchControls.tscn` | On-screen D-pad + action / pickup / inventory / quest buttons |
-| `scenes/Desi.tscn` | Desi, the quest-giver — wanders the house, with her head marker |
-| `scenes/DialogueBox.tscn` | Bottom message box (portrait, name, text) |
-| `scenes/PlaceableItem.tscn` | Generic furniture: inspect or pick up |
-| `scenes/ItemPopup.tscn` | Centered popup with an item's picture, name, description |
-| `scenes/InventoryPanel.tscn` | Togglable list of collected items |
-| `scenes/QuestLog.tscn` | Togglable list of active quests + objectives |
-| `scenes/QuestMarker.tscn` | Floating `!` / `✓` icon above quest objects |
-| `scenes/Door.tscn` | Walk-in area that loads another scene at a spawn point |
-| `scenes/TrashCan.tscn` / `scenes/TrashContainer.tscn` | The quest's bag-source / deliver objects |
-| `scenes/TrashPiece.tscn` | One hidden, unmarked piece of trash to find and bag |
-| `scenes/TrashCounter.tscn` | The on-screen `X / 8` bagged-trash counter |
-| `scenes/Mouse.tscn` | The garden mouse: wanders, chases the player, starts a fight on contact |
-| `scenes/Combat.tscn` | The Pokemon-style mouse encounter (throw / scream / run) |
-| `scripts/quest_manager.gd` | Autoload: the trash quest state machine |
-| `scripts/game_state.gd` | Autoload: carries the spawn point across scene changes |
-| `scripts/interaction_manager.gd` | Autoload: routes buttons to the nearest object |
-| `scripts/inventory.gd` | Autoload: stores picked-up items |
-| `scripts/character.gd` | Reusable base (`Character`): walking, facing, walk-cycle animation |
-| `scripts/mouse.gd` | The garden mouse (extends `Character`): wander, chase, start combat |
-| `scripts/combat.gd` | The combat scene flow: one player action, then the mouse's turn |
-| `scripts/combat_rules.gd` | Pure, testable combat odds (run / scream / throw / charge) |
-| `scripts/quest_object.gd` | Shared base for the trash can / container |
-| `scripts/*.gd` | One script per scene above (player, npc, door, popups, panels, marker) |
+| `scripts/autoload/` | Global singletons: `game_state`, `inventory`, `quest_manager`, `interaction_manager`, `build_mode` |
+| `scripts/core/` | `character.gd` — reusable base (`Character`): walking, facing, walk-cycle animation |
+| `scripts/actors/` & `scenes/actors/` | The player, Desi (npc), and the garden mouse |
+| `scripts/world/` & `scenes/world/` | The house, garden, doors, and placeable furniture |
+| `scripts/quest/` & `scenes/quest/` | The trash quest objects: can, container, pieces, and the `!`/`✓` marker |
+| `scripts/combat/` & `scenes/combat/` | The Pokemon-style mouse encounter + its pure `combat_rules.gd` odds |
+| `scripts/ui/` & `scenes/ui/` | Dialogue box, item popup, inventory panel, quest log, touch controls, trash counter |
+| `scenes/world/house.tscn` | Main scene: floor, walls, furniture, Desi, the trash can, the garden door |
 | `assets/*.png` | Generated art (do not edit by hand) |
 | `tools/generate_assets.py` | Draws every PNG in `assets/` |
 | `tools/pixel_font.py` | Draws the bitmap UI font (`assets/font.png` / `.fnt`) |
@@ -90,12 +74,16 @@ smoke-boot of the game — on every pull request and on every push to `main`.
 | Pick up | F | **B** button |
 | Inventory | I / Tab | **I** button |
 | Quest log | J | **Q** button |
+| Build mode (tile grid) | B | — |
 
 - Stand next to any piece of **furniture** and press Interact to see its name and
   a description. Press Pick up to remove it into your inventory (each item is its
   own placeable unit — groundwork for a future in-game store).
 - Walk through the **door** (bottom-left of the house) to reach the garden, and
   the door in the garden to return.
+- Press **B** for **Build mode** — a developer overlay that draws the world's
+  16×16 tile grid with column/row indices, so you can read a cell's coordinates
+  when hand-placing furniture in the scene files. Press **B** again to hide it.
 
 ## The "Take Out the Trash" quest
 

@@ -1,14 +1,16 @@
 [gd_scene load_steps=4 format=3]
 
-[ext_resource type="Script" path="res://scripts/player.gd" id="1"]
-[ext_resource type="Texture2D" path="res://assets/player_spritesheet.png" id="2"]
+[ext_resource type="Script" path="res://scripts/actors/mouse.gd" id="1"]
+[ext_resource type="Texture2D" path="res://assets/mouse_spritesheet.png" id="2"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_1"]
 size = Vector2(10, 6)
 
-[node name="Player" type="CharacterBody2D"]
+[node name="Mouse" type="CharacterBody2D"]
+collision_layer = 0
+collision_mask = 0
 script = ExtResource("1")
-walk_speed = 70.0
+walk_speed = 52.0
 
 [node name="Sprite" type="Sprite2D" parent="."]
 texture = ExtResource("2")
