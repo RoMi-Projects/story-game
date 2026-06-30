@@ -18,6 +18,11 @@ func _initialize() -> void:
 	_test_world_holds_exactly_enough_pieces()
 	_test_desi_has_a_walk_spritesheet()
 	_test_character_faces_its_movement_direction()
+	_test_throwing_the_bag_resets_the_collection()
+	_test_combat_odds_match_the_design()
+	_test_mouse_respawn_is_remembered_across_areas()
+	_test_garden_holds_a_mouse()
+	_test_mouse_has_a_walk_spritesheet()
 	_test_inventory_marks_quest_items()
 	_test_inventory_removes_delivered_items()
 	_test_ui_font_is_a_crisp_bitmap()
@@ -119,6 +124,72 @@ func _test_pieces_are_counted_once_and_remembered() -> void:
 	_check("the same piece is only counted once", quest.pieces_collected() == 1)
 	_check("a bagged piece stays remembered across scenes", quest.is_piece_collected("house_1"))
 	quest.free()
+
+
+# --- combat --------------------------------------------------------------------
+
+func _test_throwing_the_bag_resets_the_collection() -> void:
+	var quest = load("res://scripts/quest_manager.gd").new()
+	quest.accept()
+	quest.take_bag()
+	quest.collect_piece("garden_1")
+	quest.collect_piece("garden_2")
+	quest.drop_bag()
+	_check("missing the throw empties the haul",
+		quest.pieces_collected() == 0 and not quest.is_piece_collected("garden_1"))
+	_check("a dropped bag sends the player back for a new one",
+		quest.state == quest.State.ACCEPTED and not quest.is_carrying())
+	quest.free()
+
+
+func _test_combat_odds_match_the_design() -> void:
+	var rng := RandomNumberGenerator.new()
+	rng.seed = 20240601
+	var trials := 4000
+	_check("running escapes about 95% of the time",
+		_is_near(_ratio_over_trials(CombatRules.run_escapes, rng, trials), CombatRules.RUN_ESCAPE_CHANCE))
+	_check("screaming scares the mouse about half the time",
+		_is_near(_ratio_over_trials(CombatRules.scream_scares_mouse, rng, trials), CombatRules.SCREAM_FLEE_CHANCE))
+	_check("a thrown bag connects about 30% of the time",
+		_is_near(_ratio_over_trials(CombatRules.throw_hits, rng, trials), CombatRules.THROW_HIT_CHANCE))
+	_check("the mouse charges about 15% of the time",
+		_is_near(_ratio_over_trials(CombatRules.mouse_charges, rng, trials), CombatRules.MOUSE_CHARGE_CHANCE))
+
+
+func _ratio_over_trials(roll: Callable, rng: RandomNumberGenerator, trials: int) -> float:
+	var hits := 0
+	for _trial in trials:
+		if roll.call(rng):
+			hits += 1
+	return float(hits) / float(trials)
+
+
+func _is_near(actual: float, expected: float) -> bool:
+	return absf(actual - expected) <= 0.04
+
+
+func _test_mouse_respawn_is_remembered_across_areas() -> void:
+	var state = load("res://scripts/game_state.gd").new()
+	_check("the mouse starts out roaming the garden", state.mouse_is_active())
+	state.suppress_mouse()
+	_check("after a fight the mouse stays gone this visit", not state.mouse_is_active())
+	state.activate_mouse()
+	_check("returning through the house brings the mouse back", state.mouse_is_active())
+	state.flag_mouse_loss()
+	_check("a loss is reported to Desi once", state.take_mouse_loss())
+	_check("the loss flag clears after it is read", not state.take_mouse_loss())
+	state.free()
+
+
+func _test_garden_holds_a_mouse() -> void:
+	var garden := FileAccess.get_file_as_string("res://scenes/Garden.tscn")
+	_check("the garden contains a mouse to fight", garden.contains("scenes/Mouse.tscn"))
+
+
+func _test_mouse_has_a_walk_spritesheet() -> void:
+	var sheet: Texture2D = load("res://assets/mouse_spritesheet.png")
+	_check("the mouse has a 4-direction walk spritesheet (4 rows x 4 frames)",
+		sheet.get_width() == FRAME_WIDTH * 4 and sheet.get_height() == FRAME_HEIGHT * 4)
 
 
 # --- inventory -----------------------------------------------------------------

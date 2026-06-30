@@ -113,6 +113,14 @@ PALETTE = {
     "apple": (204, 154, 100, 255),
     "apple_dark": (152, 110, 68, 255),
     "apple_seed": (60, 44, 34, 255),
+    "mouse_body": (150, 150, 158, 255),
+    "mouse_dark": (112, 112, 122, 255),
+    "mouse_belly": (200, 198, 202, 255),
+    "mouse_ear": (214, 150, 158, 255),
+    "mouse_nose": (224, 126, 138, 255),
+    "mouse_eye": (38, 34, 40, 255),
+    "sky": (180, 214, 232, 255),
+    "sky_low": (206, 230, 240, 255),
 }
 
 
@@ -894,6 +902,150 @@ def _checker_grass(pixels):
                           PALETTE["grass_dark"])
 
 
+# --- the mouse and its combat scene --------------------------------------------
+
+def draw_mouse_spritesheet():
+    rows = ["down", "up", "left", "right"]
+    sheet = new_image(FRAME_WIDTH * WALK_FRAME_COUNT, FRAME_HEIGHT * len(rows))
+    for row_index, facing in enumerate(rows):
+        for frame in range(WALK_FRAME_COUNT):
+            cell = _draw_mouse_cell(facing, frame)
+            sheet.paste(cell, (frame * FRAME_WIDTH, row_index * FRAME_HEIGHT))
+    return sheet
+
+
+def _draw_mouse_cell(facing, frame):
+    image = new_image(FRAME_WIDTH, FRAME_HEIGHT)
+    pixels = image.load()
+    _draw_mouse_tail(pixels, facing)
+    _draw_mouse_body(pixels)
+    _draw_mouse_face(pixels, facing)
+    _draw_mouse_feet(pixels, frame)
+    return image
+
+
+def _draw_mouse_body(pixels):
+    fill_rect(pixels, 5, 13, 10, 21, PALETTE["mouse_body"])
+    fill_rect(pixels, 6, 12, 9, 12, PALETTE["mouse_body"])
+    fill_rect(pixels, 5, 21, 10, 21, PALETTE["mouse_dark"])
+
+
+def _draw_mouse_tail(pixels, facing):
+    if facing == "up":
+        fill_rect(pixels, 7, 20, 8, 23, PALETTE["mouse_ear"])
+    elif facing == "left":
+        fill_rect(pixels, 11, 17, 13, 18, PALETTE["mouse_ear"])
+    elif facing == "right":
+        fill_rect(pixels, 2, 17, 4, 18, PALETTE["mouse_ear"])
+
+
+def _draw_mouse_face(pixels, facing):
+    if facing == "up":
+        fill_rect(pixels, 4, 11, 5, 13, PALETTE["mouse_ear"])
+        fill_rect(pixels, 10, 11, 11, 13, PALETTE["mouse_ear"])
+        return
+    if facing == "down":
+        fill_rect(pixels, 4, 11, 5, 13, PALETTE["mouse_ear"])
+        fill_rect(pixels, 10, 11, 11, 13, PALETTE["mouse_ear"])
+        fill_rect(pixels, 6, 15, 9, 18, PALETTE["mouse_belly"])
+        pixels[6, 15] = PALETTE["mouse_eye"]
+        pixels[9, 15] = PALETTE["mouse_eye"]
+        pixels[7, 17] = PALETTE["mouse_nose"]
+        pixels[8, 17] = PALETTE["mouse_nose"]
+        return
+    # profile: one ear up top, snout and eye on the facing side
+    fill_rect(pixels, 7, 10, 8, 12, PALETTE["mouse_ear"])
+    if facing == "left":
+        fill_rect(pixels, 3, 16, 4, 18, PALETTE["mouse_body"])
+        pixels[3, 17] = PALETTE["mouse_nose"]
+        pixels[6, 15] = PALETTE["mouse_eye"]
+    else:
+        fill_rect(pixels, 11, 16, 12, 18, PALETTE["mouse_body"])
+        pixels[12, 17] = PALETTE["mouse_nose"]
+        pixels[9, 15] = PALETTE["mouse_eye"]
+
+
+def _draw_mouse_feet(pixels, frame):
+    left_raised = frame == 1
+    right_raised = frame == 3
+    fill_rect(pixels, 5, 21 if left_raised else 22, 6, 22 if left_raised else 23,
+              PALETTE["mouse_ear"])
+    fill_rect(pixels, 9, 21 if right_raised else 22, 10, 22 if right_raised else 23,
+              PALETTE["mouse_ear"])
+
+
+def draw_mouse_battle():
+    image = new_image(48, 40)
+    pixels = image.load()
+    # tail, curling out behind to the right
+    fill_rect(pixels, 33, 22, 40, 23, PALETTE["mouse_ear"])
+    fill_rect(pixels, 39, 18, 40, 23, PALETTE["mouse_ear"])
+    # body
+    fill_rect(pixels, 12, 14, 34, 33, PALETTE["mouse_body"])
+    fill_rect(pixels, 14, 12, 32, 13, PALETTE["mouse_body"])
+    fill_rect(pixels, 12, 33, 34, 34, PALETTE["mouse_dark"])
+    fill_rect(pixels, 16, 22, 28, 32, PALETTE["mouse_belly"])
+    # ears
+    fill_rect(pixels, 9, 6, 16, 13, PALETTE["mouse_body"])
+    fill_rect(pixels, 28, 6, 35, 13, PALETTE["mouse_body"])
+    fill_rect(pixels, 11, 8, 14, 11, PALETTE["mouse_ear"])
+    fill_rect(pixels, 30, 8, 33, 11, PALETTE["mouse_ear"])
+    # face, looking down toward the player
+    fill_rect(pixels, 17, 18, 18, 20, PALETTE["mouse_eye"])
+    fill_rect(pixels, 26, 18, 27, 20, PALETTE["mouse_eye"])
+    fill_rect(pixels, 21, 23, 23, 25, PALETTE["mouse_nose"])
+    # whiskers
+    fill_rect(pixels, 13, 24, 18, 24, PALETTE["mouse_dark"])
+    fill_rect(pixels, 26, 24, 31, 24, PALETTE["mouse_dark"])
+    # feet
+    fill_rect(pixels, 14, 34, 18, 36, PALETTE["mouse_ear"])
+    fill_rect(pixels, 28, 34, 32, 36, PALETTE["mouse_ear"])
+    return image
+
+
+def draw_player_battle():
+    # The player seen from behind, the way Pokemon frames the trainer.
+    image = new_image(32, 40)
+    pixels = image.load()
+    fill_rect(pixels, 8, 2, 23, 7, PALETTE["hat"])
+    fill_rect(pixels, 6, 7, 25, 8, PALETTE["hat_shadow"])
+    fill_rect(pixels, 9, 9, 22, 11, PALETTE["hair"])
+    fill_rect(pixels, 8, 12, 23, 27, PALETTE["shirt"])
+    fill_rect(pixels, 6, 13, 8, 24, PALETTE["shirt_shadow"])
+    fill_rect(pixels, 23, 13, 25, 24, PALETTE["shirt_shadow"])
+    fill_rect(pixels, 9, 28, 22, 35, PALETTE["pants"])
+    fill_rect(pixels, 15, 28, 16, 35, PALETTE["pants_shadow"])
+    fill_rect(pixels, 9, 36, 14, 39, PALETTE["shoe"])
+    fill_rect(pixels, 17, 36, 22, 39, PALETTE["shoe"])
+    return image
+
+
+def draw_combat_bg():
+    image = new_image(320, 180)
+    pixels = image.load()
+    fill_rect(pixels, 0, 0, 319, 89, PALETTE["sky"])
+    fill_rect(pixels, 0, 70, 319, 89, PALETTE["sky_low"])
+    fill_rect(pixels, 0, 90, 319, 179, PALETTE["grass"])
+    for y in range(96, 180, 8):
+        fill_rect(pixels, 0, y, 319, y, PALETTE["grass_dark"])
+    _draw_combat_platform(pixels, 60, 150, 52, 12)
+    _draw_combat_platform(pixels, 234, 74, 46, 10)
+    return image
+
+
+def _draw_combat_platform(pixels, cx, cy, half_w, half_h):
+    for y in range(cy - half_h, cy + half_h + 1):
+        span = int(half_w * (1.0 - (abs(y - cy) / float(half_h)) ** 2))
+        fill_rect(pixels, cx - span, y, cx + span, y, PALETTE["grass_dark"])
+
+
+def draw_desi_smile():
+    image, pixels = _new_portrait()
+    _draw_happy_eyes(pixels)
+    _draw_smile_mouth(pixels)
+    return image
+
+
 # --- entry point ---------------------------------------------------------------
 
 def assets_directory():
@@ -917,6 +1069,11 @@ def main():
     save(draw_desi_portrait(), "desi_portrait.png", directory)
     save(draw_desi_kiss(), "desi_kiss.png", directory)
     save(draw_desi_wink(), "desi_wink.png", directory)
+    save(draw_desi_smile(), "desi_smile.png", directory)
+    save(draw_mouse_spritesheet(), "mouse_spritesheet.png", directory)
+    save(draw_mouse_battle(), "mouse_battle.png", directory)
+    save(draw_player_battle(), "player_battle.png", directory)
+    save(draw_combat_bg(), "combat_bg.png", directory)
     save(draw_player_carry_spritesheet(), "player_carry_spritesheet.png", directory)
     save(draw_marker_exclaim(), "marker_exclaim.png", directory)
     save(draw_marker_check(), "marker_check.png", directory)

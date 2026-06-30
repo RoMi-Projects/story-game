@@ -26,11 +26,16 @@ generated from scratch.
 | `scenes/TrashCan.tscn` / `scenes/TrashContainer.tscn` | The quest's bag-source / deliver objects |
 | `scenes/TrashPiece.tscn` | One hidden, unmarked piece of trash to find and bag |
 | `scenes/TrashCounter.tscn` | The on-screen `X / 8` bagged-trash counter |
+| `scenes/Mouse.tscn` | The garden mouse: wanders, chases the player, starts a fight on contact |
+| `scenes/Combat.tscn` | The Pokemon-style mouse encounter (throw / scream / run) |
 | `scripts/quest_manager.gd` | Autoload: the trash quest state machine |
 | `scripts/game_state.gd` | Autoload: carries the spawn point across scene changes |
 | `scripts/interaction_manager.gd` | Autoload: routes buttons to the nearest object |
 | `scripts/inventory.gd` | Autoload: stores picked-up items |
 | `scripts/character.gd` | Reusable base (`Character`): walking, facing, walk-cycle animation |
+| `scripts/mouse.gd` | The garden mouse (extends `Character`): wander, chase, start combat |
+| `scripts/combat.gd` | The combat scene flow: one player action, then the mouse's turn |
+| `scripts/combat_rules.gd` | Pure, testable combat odds (run / scream / throw / charge) |
 | `scripts/quest_object.gd` | Shared base for the trash can / container |
 | `scripts/*.gd` | One script per scene above (player, npc, door, popups, panels, marker) |
 | `assets/*.png` | Generated art (do not edit by hand) |
@@ -110,3 +115,22 @@ smoke-boot of the game — on every pull request and on every push to `main`.
 5. Return to the house: Desi now shows a **`✓`**. Talk to her for a thank-you
    (and a kiss 💋). From then on she just winks: "Next time don't make me ask
    you!"
+
+## The garden mouse (combat)
+
+A **mouse** roams the garden. Get too close and it chases you; if it touches you
+a **Pokemon-style fight** begins. You get **one action**:
+
+- **Throw Bag** — only shown while you're carrying the trash bag. **30%** to hit:
+  on a hit the mouse flees and you keep your bag and your count. On a miss the
+  bag is gone — your count resets to **0**, every collected piece returns to the
+  world, and you must fetch a fresh bag from the trash can.
+- **Scream** — **50%** the mouse flees.
+- **Run** — **95%** you escape.
+
+If your action doesn't end the fight, the **mouse takes a turn**: **15%** it
+charges and you lose (you wake up back in the house and Desi walks over —
+*"You saw the mouse again?"*), otherwise it loses interest and the fight ends.
+
+Once the fight is over the mouse is gone from the garden; it only comes back
+after you've returned to the house and come out again.

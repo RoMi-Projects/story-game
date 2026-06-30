@@ -7,6 +7,7 @@ extends Character
 const ANGRY := preload("res://assets/desi_portrait.png")
 const KISS := preload("res://assets/desi_kiss.png")
 const WINK := preload("res://assets/desi_wink.png")
+const SMILE := preload("res://assets/desi_smile.png")
 const EXCLAIM := preload("res://assets/marker_exclaim.png")
 const CHECK := preload("res://assets/marker_check.png")
 const HEART := preload("res://assets/heart.png")
@@ -37,6 +38,7 @@ var _player_in_range := false
 var _target := Vector2.ZERO
 var _pause_timer := 0.0
 var _seconds_on_target := 0.0
+var _approaching_after_loss := false
 
 
 func _ready() -> void:
@@ -47,13 +49,34 @@ func _ready() -> void:
 	_heart.visible = false
 	_refresh_marker()
 	_pick_new_target()
+	# Being back in the house means the garden mouse gets another go next visit.
+	GameState.activate_mouse()
+	_approaching_after_loss = GameState.take_mouse_loss()
 
 
 func _physics_process(delta: float) -> void:
+	if _approaching_after_loss:
+		_approach_player_after_loss(delta)
+		return
 	if _player_in_range:
 		_stop_and_face_player()
 		return
 	_wander(delta)
+
+
+func _approach_player_after_loss(delta: float) -> void:
+	var player := get_tree().get_first_node_in_group("player")
+	if player == null:
+		_approaching_after_loss = false
+		return
+	var to_player: Vector2 = player.global_position - global_position
+	if to_player.length() <= ARRIVAL_DISTANCE + 12.0:
+		stop_walking()
+		face_towards(to_player)
+		_say(SMILE, "You saw the mouse again?")
+		_approaching_after_loss = false
+		return
+	walk(to_player.normalized(), delta)
 
 
 func _wander(delta: float) -> void:

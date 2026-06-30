@@ -42,6 +42,16 @@ func deliver_trash() -> void:
 	_advance(State.DELIVERED, State.COLLECTING)
 
 
+func drop_bag() -> void:
+	# Throwing the bag at the mouse and missing spills the haul: every collected
+	# piece returns to the world and the player must grab a fresh bag.
+	if state != State.COLLECTING:
+		return
+	_collected_pieces.clear()
+	state = State.ACCEPTED
+	changed.emit()
+
+
 func turn_in() -> void:
 	_advance(State.COMPLETED, State.DELIVERED)
 
