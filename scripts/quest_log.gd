@@ -32,19 +32,18 @@ func _rebuild() -> void:
 	for entry in _entries.get_children():
 		entry.queue_free()
 	if QuestManager.state == QuestManager.State.NOT_STARTED:
-		_entries.add_child(_line("(no active quests)", 10, Color.WHITE))
+		_entries.add_child(_line("(no active quests)", Color.WHITE))
 		return
-	_entries.add_child(_line(QuestManager.TITLE, 11, Color(0.84, 0.7, 0.38, 1)))
+	_entries.add_child(_line(QuestManager.TITLE, Color(0.84, 0.7, 0.38, 1)))
 	if QuestManager.is_completed():
-		_entries.add_child(_line("Completed!", 9, Color(0.55, 0.8, 0.55, 1)))
+		_entries.add_child(_line("Completed!", Color(0.55, 0.8, 0.55, 1)))
 	else:
-		_entries.add_child(_line(QuestManager.objective_text(), 9, Color.WHITE))
+		_entries.add_child(_line(QuestManager.objective_text(), Color.WHITE))
 
 
-func _line(text: String, size: int, color: Color) -> Label:
+func _line(text: String, color: Color) -> Label:
 	var label := Label.new()
 	label.text = text
-	label.add_theme_font_size_override("font_size", size)
 	label.add_theme_color_override("font_color", color)
 	label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	label.custom_minimum_size = Vector2(180, 0)

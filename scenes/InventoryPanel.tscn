@@ -18,7 +18,6 @@ offset_top = 6.0
 offset_right = 152.0
 offset_bottom = 24.0
 theme_override_colors/font_color = Color(0.84, 0.7, 0.38, 1)
-theme_override_font_sizes/font_size = 12
 text = "Inventory"
 
 [node name="Items" type="VBoxContainer" parent="Panel"]
@@ -35,5 +34,4 @@ offset_top = 120.0
 offset_right = 152.0
 offset_bottom = 132.0
 theme_override_colors/font_color = Color(0.65, 0.65, 0.7, 1)
-theme_override_font_sizes/font_size = 8
-text = "Inventory button: close"
+text = "I / Tab: close"
