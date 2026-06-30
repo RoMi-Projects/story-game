@@ -8,6 +8,7 @@ size = Vector2(10, 6)
 
 [node name="Player" type="CharacterBody2D"]
 script = ExtResource("1")
+walk_speed = 70.0
 
 [node name="Sprite" type="Sprite2D" parent="."]
 texture = ExtResource("2")
