@@ -12,6 +12,7 @@ size = Vector2(44, 44)
 
 [node name="Desi" type="CharacterBody2D"]
 script = ExtResource("1")
+walk_speed = 26.0
 
 [node name="Sprite" type="Sprite2D" parent="."]
 texture = ExtResource("2")

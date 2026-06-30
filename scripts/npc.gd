@@ -1,7 +1,8 @@
-extends CharacterBody2D
-## Desi: the quest-giver. She wanders the house, stops to face and talk to the
-## player when they come near, and her dialogue, portrait, and head marker all
-## depend on the trash quest's state.
+extends Character
+## Desi: the quest-giver. Movement and the walk animation come from `Character`;
+## this script adds her behaviour: wandering the house, stopping to face and talk
+## to the player when they come near, and a head marker / portrait / dialogue that
+## all depend on the trash quest's state.
 
 const ANGRY := preload("res://assets/desi_portrait.png")
 const KISS := preload("res://assets/desi_kiss.png")
@@ -20,20 +21,12 @@ const INTRO_LINES := [
 	"Grab a bag from the kitchen and pick up every last piece!",
 ]
 
-const WALK_SPEED := 26.0
-const FRAME_WIDTH := 16
-const FRAME_HEIGHT := 24
-const WALK_FRAME_COUNT := 4
-const SECONDS_PER_FRAME := 0.18
-const ROW_FOR_FACING := {"down": 0, "up": 1, "left": 2, "right": 3}
-
 # The patch of floor she roams, kept clear of the walls.
 const ROAM_MIN := Vector2(40, 44)
 const ROAM_MAX := Vector2(280, 148)
 const ARRIVAL_DISTANCE := 4.0
 const MAX_SECONDS_PER_TARGET := 3.0
 
-@onready var _sprite: Sprite2D = $Sprite
 @onready var _interaction_area: Area2D = $InteractionArea
 @onready var _marker: Node2D = $QuestMarker
 @onready var _heart: Sprite2D = $Heart
@@ -41,9 +34,6 @@ const MAX_SECONDS_PER_TARGET := 3.0
 var _dialogue_box: Node = null
 var _intro_line := 0
 var _player_in_range := false
-var _facing := "down"
-var _walk_frame := 0
-var _time_on_frame := 0.0
 var _target := Vector2.ZERO
 var _pause_timer := 0.0
 var _seconds_on_target := 0.0
@@ -61,7 +51,7 @@ func _ready() -> void:
 
 func _physics_process(delta: float) -> void:
 	if _player_in_range:
-		_pause_and_face_player()
+		_stop_and_face_player()
 		return
 	_wander(delta)
 
@@ -69,18 +59,14 @@ func _physics_process(delta: float) -> void:
 func _wander(delta: float) -> void:
 	if _pause_timer > 0.0:
 		_pause_timer -= delta
-		_stand_still()
+		stop_walking()
 		return
 	_seconds_on_target += delta
 	var to_target := _target - global_position
 	if to_target.length() < ARRIVAL_DISTANCE or _seconds_on_target > MAX_SECONDS_PER_TARGET:
 		_pick_new_target()
 		return
-	var direction := to_target.normalized()
-	velocity = direction * WALK_SPEED
-	move_and_slide()
-	_face_towards(direction)
-	_advance_walk(delta)
+	walk(to_target.normalized(), delta)
 
 
 func _pick_new_target() -> void:
@@ -91,46 +77,11 @@ func _pick_new_target() -> void:
 	_seconds_on_target = 0.0
 
 
-func _stand_still() -> void:
-	velocity = Vector2.ZERO
-	_reset_to_idle_frame()
-
-
-func _pause_and_face_player() -> void:
-	_stand_still()
+func _stop_and_face_player() -> void:
 	var player := get_tree().get_first_node_in_group("player")
 	if player != null:
-		_face_towards(player.global_position - global_position)
-
-
-func _face_towards(direction: Vector2) -> void:
-	if direction == Vector2.ZERO:
-		return
-	if absf(direction.x) > absf(direction.y):
-		_facing = "right" if direction.x > 0.0 else "left"
-	else:
-		_facing = "down" if direction.y > 0.0 else "up"
-	_show_current_frame()
-
-
-func _advance_walk(delta: float) -> void:
-	_time_on_frame += delta
-	if _time_on_frame >= SECONDS_PER_FRAME:
-		_time_on_frame -= SECONDS_PER_FRAME
-		_walk_frame = (_walk_frame + 1) % WALK_FRAME_COUNT
-	_show_current_frame()
-
-
-func _reset_to_idle_frame() -> void:
-	_walk_frame = 0
-	_time_on_frame = 0.0
-	_show_current_frame()
-
-
-func _show_current_frame() -> void:
-	var row: int = ROW_FOR_FACING[_facing]
-	_sprite.region_rect = Rect2(
-		_walk_frame * FRAME_WIDTH, row * FRAME_HEIGHT, FRAME_WIDTH, FRAME_HEIGHT)
+		face_towards(player.global_position - global_position)
+	stop_walking()
 
 
 func on_primary() -> void:

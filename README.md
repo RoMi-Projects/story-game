@@ -30,6 +30,7 @@ generated from scratch.
 | `scripts/game_state.gd` | Autoload: carries the spawn point across scene changes |
 | `scripts/interaction_manager.gd` | Autoload: routes buttons to the nearest object |
 | `scripts/inventory.gd` | Autoload: stores picked-up items |
+| `scripts/character.gd` | Reusable base (`Character`): walking, facing, walk-cycle animation |
 | `scripts/quest_object.gd` | Shared base for the trash can / container |
 | `scripts/*.gd` | One script per scene above (player, npc, door, popups, panels, marker) |
 | `assets/*.png` | Generated art (do not edit by hand) |

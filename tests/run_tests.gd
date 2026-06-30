@@ -17,6 +17,7 @@ func _initialize() -> void:
 	_test_pieces_are_counted_once_and_remembered()
 	_test_world_holds_exactly_enough_pieces()
 	_test_desi_has_a_walk_spritesheet()
+	_test_character_faces_its_movement_direction()
 	_test_inventory_marks_quest_items()
 	_test_inventory_removes_delivered_items()
 	_test_ui_font_is_a_crisp_bitmap()
@@ -84,6 +85,19 @@ func _count_pieces(scene_path: String) -> int:
 		if line.begins_with("piece_id = "):
 			count += 1
 	return count
+
+
+func _test_character_faces_its_movement_direction() -> void:
+	# The shared walking logic the player and Desi both reuse from Character.
+	var character := Character.new()
+	character.face_towards(Vector2.RIGHT)
+	var right_ok: bool = character._facing == "right"
+	character.face_towards(Vector2.UP)
+	var up_ok: bool = character._facing == "up"
+	character.face_towards(Vector2(0.3, -0.9))
+	var dominant_axis_ok: bool = character._facing == "up"
+	_check("a character faces its dominant movement axis", right_ok and up_ok and dominant_axis_ok)
+	character.free()
 
 
 func _test_desi_has_a_walk_spritesheet() -> void:
