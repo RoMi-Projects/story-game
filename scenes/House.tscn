@@ -1,4 +1,4 @@
-[gd_scene load_steps=22 format=3]
+[gd_scene load_steps=29 format=3]
 
 [ext_resource type="Texture2D" path="res://assets/floor_tile.png" id="1"]
 [ext_resource type="Texture2D" path="res://assets/wall_tile.png" id="2"]
@@ -19,6 +19,13 @@
 [ext_resource type="PackedScene" path="res://scenes/TrashCan.tscn" id="17"]
 [ext_resource type="PackedScene" path="res://scenes/Door.tscn" id="18"]
 [ext_resource type="PackedScene" path="res://scenes/QuestLog.tscn" id="19"]
+[ext_resource type="PackedScene" path="res://scenes/TrashPiece.tscn" id="20"]
+[ext_resource type="PackedScene" path="res://scenes/TrashCounter.tscn" id="21"]
+[ext_resource type="Texture2D" path="res://assets/trash_banana.png" id="22"]
+[ext_resource type="Texture2D" path="res://assets/trash_can_litter.png" id="23"]
+[ext_resource type="Texture2D" path="res://assets/trash_paper.png" id="24"]
+[ext_resource type="Texture2D" path="res://assets/trash_fishbone.png" id="25"]
+[ext_resource type="Texture2D" path="res://assets/trash_apple.png" id="26"]
 
 [sub_resource type="RectangleShape2D" id="WallHorizontal"]
 size = Vector2(320, 16)
@@ -141,6 +148,31 @@ texture = ExtResource("14")
 [node name="TrashCan" parent="." instance=ExtResource("17")]
 position = Vector2(104, 46)
 
+[node name="TrashPiece1" parent="." instance=ExtResource("20")]
+position = Vector2(200, 56)
+texture = ExtResource("22")
+piece_id = "house_1"
+
+[node name="TrashPiece2" parent="." instance=ExtResource("20")]
+position = Vector2(118, 86)
+texture = ExtResource("23")
+piece_id = "house_2"
+
+[node name="TrashPiece3" parent="." instance=ExtResource("20")]
+position = Vector2(276, 150)
+texture = ExtResource("24")
+piece_id = "house_3"
+
+[node name="TrashPiece4" parent="." instance=ExtResource("20")]
+position = Vector2(40, 92)
+texture = ExtResource("25")
+piece_id = "house_4"
+
+[node name="TrashPiece5" parent="." instance=ExtResource("20")]
+position = Vector2(150, 150)
+texture = ExtResource("26")
+piece_id = "house_5"
+
 [node name="DoorToGarden" parent="." instance=ExtResource("18")]
 position = Vector2(44, 150)
 target_scene = "res://scenes/Garden.tscn"
@@ -164,3 +196,5 @@ position = Vector2(160, 90)
 [node name="InventoryPanel" parent="." instance=ExtResource("9")]
 
 [node name="QuestLog" parent="." instance=ExtResource("19")]
+
+[node name="TrashCounter" parent="." instance=ExtResource("21")]

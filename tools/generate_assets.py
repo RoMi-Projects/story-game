@@ -103,6 +103,16 @@ PALETTE = {
     "sparkle": (250, 250, 240, 255),
     "star": (242, 200, 72, 255),
     "star_light": (252, 230, 132, 255),
+    "banana": (230, 202, 78, 255),
+    "banana_dark": (190, 158, 54, 255),
+    "banana_tip": (120, 96, 40, 255),
+    "can_label": (200, 72, 62, 255),
+    "paper": (226, 222, 210, 255),
+    "paper_dark": (186, 182, 170, 255),
+    "bone": (236, 232, 218, 255),
+    "apple": (204, 154, 100, 255),
+    "apple_dark": (152, 110, 68, 255),
+    "apple_seed": (60, 44, 34, 255),
 }
 
 
@@ -305,6 +315,57 @@ def _draw_desi_legs(pixels):
     fill_rect(pixels, 8, 21, 10, 22, PALETTE["skin"])
     fill_rect(pixels, 5, 23, 7, 23, PALETTE["shoe"])
     fill_rect(pixels, 8, 23, 10, 23, PALETTE["shoe"])
+
+
+def draw_desi_spritesheet():
+    rows = ["down", "up", "left", "right"]
+    sheet = new_image(FRAME_WIDTH * WALK_FRAME_COUNT, FRAME_HEIGHT * len(rows))
+    for row_index, facing in enumerate(rows):
+        for frame in range(WALK_FRAME_COUNT):
+            cell = _draw_desi_character(facing, frame)
+            sheet.paste(cell, (frame * FRAME_WIDTH, row_index * FRAME_HEIGHT))
+    return sheet
+
+
+def _draw_desi_character(facing, frame):
+    image = new_image(FRAME_WIDTH, FRAME_HEIGHT)
+    pixels = image.load()
+    _draw_desi_hair_facing(pixels, facing)
+    _draw_desi_head_facing(pixels, facing)
+    _draw_desi_dress(pixels)
+    _draw_desi_walk_legs(pixels, frame)
+    return image
+
+
+def _draw_desi_hair_facing(pixels, facing):
+    fill_rect(pixels, 4, 2, 11, 6, PALETTE["desi_hair"])
+    fill_rect(pixels, 3, 6, 4, 13, PALETTE["desi_hair_shadow"])
+    fill_rect(pixels, 11, 6, 12, 13, PALETTE["desi_hair_shadow"])
+    if facing == "up":
+        fill_rect(pixels, 5, 6, 10, 9, PALETTE["desi_hair"])
+
+
+def _draw_desi_head_facing(pixels, facing):
+    if facing == "up":
+        return
+    fill_rect(pixels, 5, 5, 10, 9, PALETTE["skin"])
+    fill_rect(pixels, 5, 5, 10, 5, PALETTE["desi_hair"])
+    fill_rect(pixels, 5, 9, 10, 9, PALETTE["skin_shadow"])
+    if facing in ("down", "left"):
+        pixels[6, 8] = PALETTE["outline"]
+    if facing in ("down", "right"):
+        pixels[9, 8] = PALETTE["outline"]
+
+
+def _draw_desi_walk_legs(pixels, frame):
+    _draw_desi_foot(pixels, 5, frame == 1)
+    _draw_desi_foot(pixels, 8, frame == 3)
+
+
+def _draw_desi_foot(pixels, left, raised):
+    skin_top = 20 if raised else 21
+    fill_rect(pixels, left, skin_top, left + 2, skin_top + 1, PALETTE["skin"])
+    fill_rect(pixels, left, skin_top + 2, left + 2, skin_top + 2, PALETTE["shoe"])
 
 
 def _new_portrait():
@@ -652,6 +713,80 @@ def draw_trash_bag():
     return image
 
 
+def draw_empty_bag():
+    image = new_image(12, 14)
+    pixels = image.load()
+    fill_rect(pixels, 2, 7, 9, 12, PALETTE["trash_bag_light"])
+    fill_rect(pixels, 1, 9, 10, 12, PALETTE["trash_bag_light"])
+    fill_rect(pixels, 2, 4, 9, 6, PALETTE["trash_bag_dark"])
+    fill_rect(pixels, 2, 4, 9, 4, PALETTE["trash_bag"])
+    fill_rect(pixels, 2, 6, 2, 11, PALETTE["trash_bag"])
+    fill_rect(pixels, 9, 6, 9, 11, PALETTE["trash_bag"])
+    fill_rect(pixels, 1, 12, 10, 12, PALETTE["trash_bag_dark"])
+    return image
+
+
+def draw_trash_banana():
+    image = new_image(12, 9)
+    pixels = image.load()
+    fill_rect(pixels, 5, 6, 6, 8, PALETTE["banana_dark"])
+    fill_rect(pixels, 2, 3, 3, 7, PALETTE["banana"])
+    fill_rect(pixels, 5, 2, 6, 7, PALETTE["banana"])
+    fill_rect(pixels, 8, 3, 9, 7, PALETTE["banana"])
+    fill_rect(pixels, 2, 3, 2, 3, PALETTE["banana_tip"])
+    fill_rect(pixels, 9, 3, 9, 3, PALETTE["banana_tip"])
+    fill_rect(pixels, 5, 2, 5, 2, PALETTE["banana_tip"])
+    return image
+
+
+def draw_trash_can_litter():
+    image = new_image(10, 13)
+    pixels = image.load()
+    fill_rect(pixels, 2, 1, 7, 11, PALETTE["metal"])
+    fill_rect(pixels, 2, 1, 7, 1, PALETTE["counter_top"])
+    fill_rect(pixels, 2, 11, 7, 11, PALETTE["trash_dark"])
+    fill_rect(pixels, 2, 4, 7, 7, PALETTE["can_label"])
+    fill_rect(pixels, 2, 2, 2, 10, PALETTE["counter_top_dark"])
+    return image
+
+
+def draw_trash_paper():
+    image = new_image(11, 10)
+    pixels = image.load()
+    fill_rect(pixels, 3, 2, 7, 7, PALETTE["paper"])
+    fill_rect(pixels, 2, 3, 8, 6, PALETTE["paper"])
+    for x, y in [(4, 3), (6, 5), (5, 6), (3, 5), (7, 4)]:
+        pixels[x, y] = PALETTE["paper_dark"]
+    return image
+
+
+def draw_trash_fishbone():
+    image = new_image(14, 8)
+    pixels = image.load()
+    fill_rect(pixels, 2, 3, 10, 4, PALETTE["bone"])
+    for x in range(3, 10, 2):
+        pixels[x, 1] = PALETTE["bone"]
+        pixels[x, 2] = PALETTE["bone"]
+        pixels[x, 5] = PALETTE["bone"]
+        pixels[x, 6] = PALETTE["bone"]
+    fill_rect(pixels, 10, 2, 12, 5, PALETTE["bone"])
+    pixels[12, 3] = PALETTE["trash_dark"]
+    fill_rect(pixels, 0, 3, 1, 4, PALETTE["bone"])
+    return image
+
+
+def draw_trash_apple():
+    image = new_image(9, 12)
+    pixels = image.load()
+    fill_rect(pixels, 4, 0, 4, 1, PALETTE["wood_dark"])
+    fill_rect(pixels, 2, 2, 6, 3, PALETTE["apple_dark"])
+    fill_rect(pixels, 3, 3, 5, 8, PALETTE["apple"])
+    fill_rect(pixels, 2, 8, 6, 10, PALETTE["apple_dark"])
+    pixels[3, 5] = PALETTE["apple_seed"]
+    pixels[5, 7] = PALETTE["apple_seed"]
+    return image
+
+
 def draw_star():
     image = new_image(11, 11)
     pixels = image.load()
@@ -778,6 +913,7 @@ def main():
     save(draw_wall_tile(), "wall_tile.png", directory)
     save(draw_player_spritesheet(), "player_spritesheet.png", directory)
     save(draw_desi_sprite(), "desi.png", directory)
+    save(draw_desi_spritesheet(), "desi_spritesheet.png", directory)
     save(draw_desi_portrait(), "desi_portrait.png", directory)
     save(draw_desi_kiss(), "desi_kiss.png", directory)
     save(draw_desi_wink(), "desi_wink.png", directory)
@@ -786,6 +922,12 @@ def main():
     save(draw_marker_check(), "marker_check.png", directory)
     save(draw_heart(), "heart.png", directory)
     save(draw_trash_bag(), "trash_bag.png", directory)
+    save(draw_empty_bag(), "empty_bag.png", directory)
+    save(draw_trash_banana(), "trash_banana.png", directory)
+    save(draw_trash_can_litter(), "trash_can_litter.png", directory)
+    save(draw_trash_paper(), "trash_paper.png", directory)
+    save(draw_trash_fishbone(), "trash_fishbone.png", directory)
+    save(draw_trash_apple(), "trash_apple.png", directory)
     save(draw_star(), "star.png", directory)
     save(draw_garden_grass(), "garden_grass.png", directory)
     save(draw_garden_path(), "garden_path.png", directory)

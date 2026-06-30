@@ -15,7 +15,7 @@ generated from scratch.
 | `scenes/Garden.tscn` | The garden: grass, fence, path, the trash container, the door home |
 | `scenes/Player.tscn` | Character body, sprite, collision shape |
 | `scenes/TouchControls.tscn` | On-screen D-pad + action / pickup / inventory / quest buttons |
-| `scenes/Desi.tscn` | Desi, the quest-giver, with her head marker |
+| `scenes/Desi.tscn` | Desi, the quest-giver — wanders the house, with her head marker |
 | `scenes/DialogueBox.tscn` | Bottom message box (portrait, name, text) |
 | `scenes/PlaceableItem.tscn` | Generic furniture: inspect or pick up |
 | `scenes/ItemPopup.tscn` | Centered popup with an item's picture, name, description |
@@ -23,7 +23,9 @@ generated from scratch.
 | `scenes/QuestLog.tscn` | Togglable list of active quests + objectives |
 | `scenes/QuestMarker.tscn` | Floating `!` / `✓` icon above quest objects |
 | `scenes/Door.tscn` | Walk-in area that loads another scene at a spawn point |
-| `scenes/TrashCan.tscn` / `scenes/TrashContainer.tscn` | The quest's collect / deliver objects |
+| `scenes/TrashCan.tscn` / `scenes/TrashContainer.tscn` | The quest's bag-source / deliver objects |
+| `scenes/TrashPiece.tscn` | One hidden, unmarked piece of trash to find and bag |
+| `scenes/TrashCounter.tscn` | The on-screen `X / 8` bagged-trash counter |
 | `scripts/quest_manager.gd` | Autoload: the trash quest state machine |
 | `scripts/game_state.gd` | Autoload: carries the spawn point across scene changes |
 | `scripts/interaction_manager.gd` | Autoload: routes buttons to the nearest object |
@@ -93,12 +95,17 @@ smoke-boot of the game — on every pull request and on every push to `main`.
 
 1. A **`!`** floats over **Desi**. Talk to her — she complains the house is
    filthy and the quest is auto-accepted (see it in the Quest log, **J / Q**).
-2. The **trash can** now shows a **`!`**. Interact with it to grab the bag —
-   Roberto's sprite changes to carry it, and the **Trash Bag** appears in your
-   inventory marked with a ⭐ (quest item).
-3. Carry it through the door to the **garden**; the **trash container** shows a
-   **`!`**. Interact to throw the trash — the sprite returns to normal and the
-   Trash Bag leaves your inventory.
-4. Return to the house: Desi now shows a **`✓`**. Talk to her for a thank-you
+2. The **trash can** now shows a **`!`**. Interact with it to grab an **empty
+   bag** — Roberto's sprite changes to carry it, the bag appears in your
+   inventory marked with a ⭐ (quest item), and a **`X / 8` counter** appears at
+   the top of the screen.
+3. **Hunt down 8 pieces of trash** scattered across the house (5) and the garden
+   (3). They are **not** marked — you have to spot them. Walk up to one and press
+   Interact to bag it; it vanishes and the counter ticks up. Collected pieces
+   stay gone even after walking between the house and the garden.
+4. With all **8/8** bagged, the garden **trash container** shows a **`!`**.
+   Interact to throw the full bag — the sprite returns to normal and the Trash
+   Bag leaves your inventory.
+5. Return to the house: Desi now shows a **`✓`**. Talk to her for a thank-you
    (and a kiss 💋). From then on she just winks: "Next time don't make me ask
    you!"

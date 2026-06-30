@@ -1,15 +1,15 @@
 extends QuestObject
-## The kitchen trash can. Normally inspectable; while the quest is at the
-## collect step it shows a marker and hands over a bag of trash.
+## The kitchen trash can. While the quest is at the accept step it shows a marker
+## and hands the player an empty bag to start the hunt for loose trash.
 
-const BAG := preload("res://assets/trash_bag.png")
+const BAG := preload("res://assets/empty_bag.png")
 
 func on_primary() -> void:
 	if QuestManager.state == QuestManager.State.ACCEPTED:
-		QuestManager.collect_trash()
+		QuestManager.take_bag()
 		Inventory.add_item(QuestManager.TRASH_ITEM,
-			"A fragrant bag of trash. Desi wants it gone.", BAG, true)
-		_flash_popup("You grab a fragrant bag of trash. Lovely.")
+			"An empty bag, ready to be filled with trash.", BAG, true)
+		_flash_popup("You grab an empty bag. Now hunt down the mess.")
 	else:
 		_toggle_info()
 

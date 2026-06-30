@@ -14,6 +14,9 @@ var _failed := 0
 func _initialize() -> void:
 	_test_quest_advances_through_every_step()
 	_test_quest_ignores_out_of_order_steps()
+	_test_pieces_are_counted_once_and_remembered()
+	_test_world_holds_exactly_enough_pieces()
+	_test_desi_has_a_walk_spritesheet()
 	_test_inventory_marks_quest_items()
 	_test_inventory_removes_delivered_items()
 	_test_ui_font_is_a_crisp_bitmap()
@@ -42,10 +45,13 @@ func _test_quest_advances_through_every_step() -> void:
 	_check("quest starts not started", quest.state == quest.State.NOT_STARTED)
 	quest.accept()
 	_check("talking to Desi accepts the quest", quest.is_active() and quest.state == quest.State.ACCEPTED)
-	quest.collect_trash()
-	_check("grabbing the bag makes the player carry it", quest.is_carrying())
+	quest.take_bag()
+	_check("grabbing the empty bag starts the collecting phase", quest.is_carrying())
+	for index in quest.TRASH_TOTAL:
+		quest.collect_piece("piece_%d" % index)
+	_check("bagging every piece fills the counter", quest.all_pieces_collected())
 	quest.deliver_trash()
-	_check("dumping the bag reaches the delivered step", quest.state == quest.State.DELIVERED)
+	_check("dumping the full bag reaches the delivered step", quest.state == quest.State.DELIVERED)
 	quest.turn_in()
 	_check("thanking Desi completes the quest", quest.is_completed() and not quest.is_active())
 	quest.free()
@@ -53,11 +59,51 @@ func _test_quest_advances_through_every_step() -> void:
 
 func _test_quest_ignores_out_of_order_steps() -> void:
 	var quest = load("res://scripts/quest_manager.gd").new()
-	quest.collect_trash()
-	_check("the bag cannot be collected before the quest is accepted", quest.state == quest.State.NOT_STARTED)
+	quest.take_bag()
+	_check("the bag cannot be grabbed before the quest is accepted", quest.state == quest.State.NOT_STARTED)
 	quest.accept()
+	quest.collect_piece("too_early")
+	_check("trash cannot be collected before the bag is grabbed", quest.pieces_collected() == 0)
+	quest.take_bag()
+	quest.collect_piece("only_one")
 	quest.deliver_trash()
-	_check("trash cannot be delivered before it is collected", quest.state == quest.State.ACCEPTED)
+	_check("the bag cannot be delivered before every piece is found", quest.state == quest.State.COLLECTING)
+	quest.free()
+
+
+func _test_world_holds_exactly_enough_pieces() -> void:
+	var placed := _count_pieces("res://scenes/House.tscn") + _count_pieces("res://scenes/Garden.tscn")
+	var quest = load("res://scripts/quest_manager.gd").new()
+	_check("the world holds exactly TRASH_TOTAL pieces to find", placed == quest.TRASH_TOTAL)
+	quest.free()
+
+
+func _count_pieces(scene_path: String) -> int:
+	var count := 0
+	for line in FileAccess.get_file_as_string(scene_path).split("\n"):
+		if line.begins_with("piece_id = "):
+			count += 1
+	return count
+
+
+func _test_desi_has_a_walk_spritesheet() -> void:
+	var sheet: Texture2D = load("res://assets/desi_spritesheet.png")
+	_check("Desi has a 4-direction walk spritesheet (4 rows x 4 frames)",
+		sheet.get_width() == FRAME_WIDTH * 4 and sheet.get_height() == FRAME_HEIGHT * 4)
+
+
+const FRAME_WIDTH := 16
+const FRAME_HEIGHT := 24
+
+
+func _test_pieces_are_counted_once_and_remembered() -> void:
+	var quest = load("res://scripts/quest_manager.gd").new()
+	quest.accept()
+	quest.take_bag()
+	quest.collect_piece("house_1")
+	quest.collect_piece("house_1")
+	_check("the same piece is only counted once", quest.pieces_collected() == 1)
+	_check("a bagged piece stays remembered across scenes", quest.is_piece_collected("house_1"))
 	quest.free()
 
 
