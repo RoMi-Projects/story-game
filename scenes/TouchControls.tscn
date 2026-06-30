@@ -19,7 +19,7 @@ offset_left = 34.0
 offset_top = 100.0
 offset_right = 60.0
 offset_bottom = 126.0
-text = "▲"
+text = "^"
 
 [node name="Left" type="Button" parent="DPad"]
 layout_mode = 1
@@ -27,7 +27,7 @@ offset_left = 8.0
 offset_top = 126.0
 offset_right = 34.0
 offset_bottom = 152.0
-text = "◀"
+text = "<"
 
 [node name="Right" type="Button" parent="DPad"]
 layout_mode = 1
@@ -35,7 +35,7 @@ offset_left = 60.0
 offset_top = 126.0
 offset_right = 86.0
 offset_bottom = 152.0
-text = "▶"
+text = ">"
 
 [node name="Down" type="Button" parent="DPad"]
 layout_mode = 1
@@ -43,7 +43,7 @@ offset_left = 34.0
 offset_top = 152.0
 offset_right = 60.0
 offset_bottom = 178.0
-text = "▼"
+text = "v"
 
 [node name="Action" type="Button" parent="DPad"]
 layout_mode = 1

@@ -18,6 +18,8 @@ from pathlib import Path
 
 from PIL import Image
 
+from pixel_font import build_fonts
+
 TILE_SIZE = 16
 
 FRAME_WIDTH = 16
@@ -799,6 +801,7 @@ def main():
     save(draw_window(), "window.png", directory)
     save(draw_wall_portrait(), "wall_portrait.png", directory)
     save(draw_icon(), "icon.png", directory)
+    build_fonts(directory)
 
 
 if __name__ == "__main__":

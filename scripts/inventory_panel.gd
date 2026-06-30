@@ -63,5 +63,4 @@ func _star_icon() -> TextureRect:
 func _entry_label(text: String) -> Label:
 	var label := Label.new()
 	label.text = text
-	label.add_theme_font_size_override("font_size", 10)
 	return label

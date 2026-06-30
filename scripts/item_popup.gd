@@ -5,7 +5,7 @@ extends CanvasLayer
 @onready var _panel: Panel = $Panel
 @onready var _image: TextureRect = $Panel/Image
 @onready var _name_label: Label = $Panel/NameLabel
-@onready var _description_label: Label = $Panel/DescriptionLabel
+@onready var _description_label: Label = $Panel/DescriptionScroll/DescriptionLabel
 
 
 func _ready() -> void:
