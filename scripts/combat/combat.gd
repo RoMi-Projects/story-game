@@ -7,8 +7,8 @@ extends Control
 ## off. The dice live in `CombatRules`; this scene just narrates and applies the
 ## outcome, then returns to the garden or the house.
 
-const GARDEN := "res://scenes/Garden.tscn"
-const HOUSE := "res://scenes/House.tscn"
+const GARDEN := "res://scenes/world/garden.tscn"
+const HOUSE := "res://scenes/world/house.tscn"
 const HOUSE_SPAWN := Vector2(44, 118)
 const BEAT_SECONDS := 1.1
 

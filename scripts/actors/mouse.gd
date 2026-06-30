@@ -4,7 +4,7 @@ extends Character
 ## from `Character`. The mouse stays gone after a fight (see `GameState`) until
 ## the player has left for the house and returned.
 
-const COMBAT_SCENE := "res://scenes/Combat.tscn"
+const COMBAT_SCENE := "res://scenes/combat/combat.tscn"
 
 # How close the player must be for the mouse to notice and to pounce.
 const DETECT_RANGE := 70.0

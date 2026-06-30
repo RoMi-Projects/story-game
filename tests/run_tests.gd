@@ -23,6 +23,9 @@ func _initialize() -> void:
 	_test_mouse_respawn_is_remembered_across_areas()
 	_test_garden_holds_a_mouse()
 	_test_mouse_has_a_walk_spritesheet()
+	_test_build_mode_starts_hidden_and_toggles()
+	_test_build_mode_grid_matches_tile_size()
+	_test_build_mode_input_is_mapped()
 	_test_inventory_marks_quest_items()
 	_test_inventory_removes_delivered_items()
 	_test_ui_font_is_a_crisp_bitmap()
@@ -47,7 +50,7 @@ func _report() -> void:
 # --- quest state machine -------------------------------------------------------
 
 func _test_quest_advances_through_every_step() -> void:
-	var quest = load("res://scripts/quest_manager.gd").new()
+	var quest = load("res://scripts/autoload/quest_manager.gd").new()
 	_check("quest starts not started", quest.state == quest.State.NOT_STARTED)
 	quest.accept()
 	_check("talking to Desi accepts the quest", quest.is_active() and quest.state == quest.State.ACCEPTED)
@@ -64,7 +67,7 @@ func _test_quest_advances_through_every_step() -> void:
 
 
 func _test_quest_ignores_out_of_order_steps() -> void:
-	var quest = load("res://scripts/quest_manager.gd").new()
+	var quest = load("res://scripts/autoload/quest_manager.gd").new()
 	quest.take_bag()
 	_check("the bag cannot be grabbed before the quest is accepted", quest.state == quest.State.NOT_STARTED)
 	quest.accept()
@@ -78,8 +81,8 @@ func _test_quest_ignores_out_of_order_steps() -> void:
 
 
 func _test_world_holds_exactly_enough_pieces() -> void:
-	var placed := _count_pieces("res://scenes/House.tscn") + _count_pieces("res://scenes/Garden.tscn")
-	var quest = load("res://scripts/quest_manager.gd").new()
+	var placed := _count_pieces("res://scenes/world/house.tscn") + _count_pieces("res://scenes/world/garden.tscn")
+	var quest = load("res://scripts/autoload/quest_manager.gd").new()
 	_check("the world holds exactly TRASH_TOTAL pieces to find", placed == quest.TRASH_TOTAL)
 	quest.free()
 
@@ -116,7 +119,7 @@ const FRAME_HEIGHT := 24
 
 
 func _test_pieces_are_counted_once_and_remembered() -> void:
-	var quest = load("res://scripts/quest_manager.gd").new()
+	var quest = load("res://scripts/autoload/quest_manager.gd").new()
 	quest.accept()
 	quest.take_bag()
 	quest.collect_piece("house_1")
@@ -129,7 +132,7 @@ func _test_pieces_are_counted_once_and_remembered() -> void:
 # --- combat --------------------------------------------------------------------
 
 func _test_throwing_the_bag_resets_the_collection() -> void:
-	var quest = load("res://scripts/quest_manager.gd").new()
+	var quest = load("res://scripts/autoload/quest_manager.gd").new()
 	quest.accept()
 	quest.take_bag()
 	quest.collect_piece("garden_1")
@@ -169,7 +172,7 @@ func _is_near(actual: float, expected: float) -> bool:
 
 
 func _test_mouse_respawn_is_remembered_across_areas() -> void:
-	var state = load("res://scripts/game_state.gd").new()
+	var state = load("res://scripts/autoload/game_state.gd").new()
 	_check("the mouse starts out roaming the garden", state.mouse_is_active())
 	state.suppress_mouse()
 	_check("after a fight the mouse stays gone this visit", not state.mouse_is_active())
@@ -181,9 +184,33 @@ func _test_mouse_respawn_is_remembered_across_areas() -> void:
 	state.free()
 
 
+func _test_build_mode_starts_hidden_and_toggles() -> void:
+	var build = load("res://scripts/autoload/build_mode.gd").new()
+	get_root().add_child(build)
+	_check("the build-mode grid is hidden until asked for",
+		not build.is_enabled() and not build.grid_is_visible())
+	build.toggle()
+	_check("toggling build mode shows the grid", build.is_enabled() and build.grid_is_visible())
+	build.toggle()
+	_check("toggling again hides the grid", not build.is_enabled() and not build.grid_is_visible())
+	build.free()
+
+
+func _test_build_mode_grid_matches_tile_size() -> void:
+	var build = load("res://scripts/autoload/build_mode.gd").new()
+	_check("the grid uses the world's 16px tile size", build.TILE == 16)
+	_check("a 320px-wide world is exactly 20 tiles across", 320 / build.TILE == 20)
+	build.free()
+
+
+func _test_build_mode_input_is_mapped() -> void:
+	var settings := FileAccess.get_file_as_string("res://project.godot")
+	_check("build mode has a toggle key bound", settings.contains("toggle_build_mode={"))
+
+
 func _test_garden_holds_a_mouse() -> void:
-	var garden := FileAccess.get_file_as_string("res://scenes/Garden.tscn")
-	_check("the garden contains a mouse to fight", garden.contains("scenes/Mouse.tscn"))
+	var garden := FileAccess.get_file_as_string("res://scenes/world/garden.tscn")
+	_check("the garden contains a mouse to fight", garden.contains("scenes/actors/mouse.tscn"))
 
 
 func _test_mouse_has_a_walk_spritesheet() -> void:
@@ -195,7 +222,7 @@ func _test_mouse_has_a_walk_spritesheet() -> void:
 # --- inventory -----------------------------------------------------------------
 
 func _test_inventory_marks_quest_items() -> void:
-	var inventory = load("res://scripts/inventory.gd").new()
+	var inventory = load("res://scripts/autoload/inventory.gd").new()
 	inventory.add_item("Trash Bag", "A fragrant bag of trash.", null, true)
 	inventory.add_item("Cozy Rug", "It ties the room together.", null)
 	_check("a quest item is flagged so it shows a star", inventory.items[0]["quest"] == true)
@@ -204,7 +231,7 @@ func _test_inventory_marks_quest_items() -> void:
 
 
 func _test_inventory_removes_delivered_items() -> void:
-	var inventory = load("res://scripts/inventory.gd").new()
+	var inventory = load("res://scripts/autoload/inventory.gd").new()
 	inventory.add_item("Trash Bag", "A fragrant bag of trash.", null, true)
 	inventory.remove_item("Trash Bag")
 	_check("delivering the bag removes it from the inventory", inventory.items.is_empty())
@@ -233,7 +260,7 @@ func _test_theme_gives_popups_a_background() -> void:
 # --- item popup ----------------------------------------------------------------
 
 func _test_item_popup_reads_clearly() -> void:
-	var popup = load("res://scenes/ItemPopup.tscn").instantiate()
+	var popup = load("res://scenes/ui/item_popup.tscn").instantiate()
 	get_root().add_child(popup)
 	await process_frame
 	var scroll := popup.get_node("Panel/DescriptionScroll") as ScrollContainer

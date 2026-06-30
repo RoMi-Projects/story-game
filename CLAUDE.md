@@ -59,15 +59,19 @@ styleboxes itself — otherwise popups lose their background.
   not in the required state). Emits `changed`; objects/markers/HUD subscribe.
 - `Inventory` — picked-up items, with a quest-item flag (⭐).
 - `GameState` — carries the player spawn position across a door/scene change.
+- `BuildMode` — a dev tool: the `toggle_build_mode` key (B) shows/hides a
+  screen-space `CanvasLayer` overlay drawing the 16px tile grid (`TILE`) with
+  column/row indices, to make hand-placing nodes in the `.tscn` files easy. It
+  aligns 1:1 only because the camera shows the whole 320×180 world unscrolled.
 
 **Class hierarchy (reuse-driven):**
-- `Character` (`scripts/character.gd`, `extends CharacterBody2D`) — shared
+- `Character` (`scripts/core/character.gd`, `extends CharacterBody2D`) — shared
   walking, facing, and 4-row×4-frame walk-cycle animation. `walk_speed` is
   `@export`ed and set per scene. **`Player`, `Desi`, and the garden `Mouse` all
   extend this**; a new walking character should too and just decide *where* to
   walk. (`Mouse` runs with `collision_layer`/`mask = 0` and clamps itself to the
   garden bounds, so it never fights the physics engine while chasing.)
-- `QuestObject` (`scripts/quest_object.gd`, `extends StaticBody2D`) — solid
+- `QuestObject` (`scripts/quest/quest_object.gd`, `extends StaticBody2D`) — solid
   inspect/use objects (trash can, container). Owns sprite + interaction
   registration + inspect popup + a quest marker shown when `_wants_marker()` is
   true. Subclasses define `on_primary()`, `item_name()`, `description()`,
@@ -75,10 +79,10 @@ styleboxes itself — otherwise popups lose their background.
   player walks over it.
 
 **Combat.** The `Mouse` chases the player and, on contact, stores the player's
-position in `GameState` and swaps to `scenes/Combat.tscn` (a real scene swap, not
-an overlay). Combat is **one player action** (throw bag / scream / run), then —
-if unresolved — **one mouse turn**, then it ends; there is no multi-round loop.
-The odds live in `scripts/combat_rules.gd` as pure static functions taking a
+position in `GameState` and swaps to `scenes/combat/combat.tscn` (a real scene
+swap, not an overlay). Combat is **one player action** (throw bag / scream / run),
+then — if unresolved — **one mouse turn**, then it ends; there is no multi-round
+loop. The odds live in `scripts/combat/combat_rules.gd` as pure static functions taking a
 `RandomNumberGenerator`, so they're unit-tested without the scene. Outcomes route
 back via `change_scene_to_file`: any non-loss returns to the garden with the
 mouse suppressed (`GameState.suppress_mouse()`); a loss goes to the house and
@@ -87,14 +91,21 @@ the mouse respawns on the next garden visit, and consumes `take_mouse_loss()` to
 walk over and react. A missed throw calls `QuestManager.drop_bag()` (resets the
 collection to 0; pieces reappear on the next scene load).
 
-**Cross-scene state.** Trash pieces live in both `House.tscn` and `Garden.tscn`,
-each with an `@export piece_id`. On `_ready` a piece frees itself if its ID is
-already collected in `QuestManager`, so collected trash stays gone across the
-door transition. A test asserts the world holds exactly `TRASH_TOTAL` (8) pieces.
+**Cross-scene state.** Trash pieces live in both `scenes/world/house.tscn` and
+`scenes/world/garden.tscn`, each with an `@export piece_id`. On `_ready` a piece
+frees itself if its ID is already collected in `QuestManager`, so collected trash
+stays gone across the door transition. A test asserts the world holds exactly
+`TRASH_TOTAL` (8) pieces.
 
-**Scene/script pairing.** Most `scenes/X.tscn` has a sibling `scripts/x.gd`. The
-main scene is `scenes/House.tscn`; `Garden.tscn` is reached via `Door` nodes that
-set `GameState` spawn then `change_scene_to_file`.
+**Project layout.** Code and scenes are grouped by **domain**, with matching
+subfolders under `scripts/` and `scenes/`: `autoload/` and `core/` (scripts only),
+`actors/`, `world/`, `quest/`, `combat/`, `ui/`. File names are **snake_case**
+throughout (scenes too: `house.tscn`, not `House.tscn`). `assets/` stays flat
+(generated). The main scene is `scenes/world/house.tscn`; `garden.tscn` is reached
+via `Door` nodes that set `GameState` spawn then `change_scene_to_file`. Most
+`scenes/<domain>/x.tscn` has a sibling `scripts/<domain>/x.gd`. References between
+files are explicit `res://` paths, so when moving a file, rewrite every reference
+to it (in `.tscn`/`.tres`, `project.godot`, and `tests/`) and reimport.
 
 ## Conventions specific to this repo
 
@@ -102,7 +113,8 @@ set `GameState` spawn then `change_scene_to_file`.
 - `.tscn` files are hand-authored text — when adding nodes, keep `load_steps` and
   `ext_resource` IDs consistent.
 - In `--script` SceneTree mode, autoload globals are **not** bound. Tests load the
-  autoload scripts directly with `load("res://scripts/x.gd").new()` instead of
-  referencing the `QuestManager`/`Inventory` globals.
+  autoload scripts directly with `load("res://scripts/<domain>/x.gd").new()` (e.g.
+  `scripts/autoload/quest_manager.gd`) instead of referencing the
+  `QuestManager`/`Inventory` globals.
 - Adding/removing trash pieces means updating the count in both scenes and
   `QuestManager.TRASH_TOTAL` (the world-count test enforces they agree).
