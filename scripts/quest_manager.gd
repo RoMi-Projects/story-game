@@ -1,30 +1,45 @@
 extends Node
 ## The single "Take Out the Trash" quest, modelled as a small state machine.
 ##
-## Every quest object (Desi, the trash can, the garden container) and the player
-## react to `state` and refresh when `changed` is emitted. Written so more
-## quests can be added later, but only this one ships now.
+## The player accepts the quest from Desi, grabs an empty bag from the kitchen,
+## hunts down every loose piece of trash in the house and garden, throws the full
+## bag in the garden bin, then returns to Desi. Quest objects and the player react
+## to `state` (and the collected count) and refresh when `changed` is emitted.
 
 signal changed
 
-enum State { NOT_STARTED, ACCEPTED, CARRYING, DELIVERED, COMPLETED }
+enum State { NOT_STARTED, ACCEPTED, COLLECTING, DELIVERED, COMPLETED }
 
 const TITLE := "Take Out the Trash"
 const TRASH_ITEM := "Trash Bag"
+const TRASH_TOTAL := 8
 
 var state: State = State.NOT_STARTED
+
+# Ids of the trash pieces already bagged. Lives on this autoload so a piece stays
+# gone after the player walks between the house and the garden.
+var _collected_pieces := {}
 
 
 func accept() -> void:
 	_advance(State.ACCEPTED, State.NOT_STARTED)
 
 
-func collect_trash() -> void:
-	_advance(State.CARRYING, State.ACCEPTED)
+func take_bag() -> void:
+	_advance(State.COLLECTING, State.ACCEPTED)
+
+
+func collect_piece(piece_id: String) -> void:
+	if state != State.COLLECTING or _collected_pieces.has(piece_id):
+		return
+	_collected_pieces[piece_id] = true
+	changed.emit()
 
 
 func deliver_trash() -> void:
-	_advance(State.DELIVERED, State.CARRYING)
+	if not all_pieces_collected():
+		return
+	_advance(State.DELIVERED, State.COLLECTING)
 
 
 func turn_in() -> void:
@@ -38,8 +53,20 @@ func _advance(next_state: State, required_state: State) -> void:
 	changed.emit()
 
 
+func is_piece_collected(piece_id: String) -> bool:
+	return _collected_pieces.has(piece_id)
+
+
+func pieces_collected() -> int:
+	return _collected_pieces.size()
+
+
+func all_pieces_collected() -> bool:
+	return pieces_collected() >= TRASH_TOTAL
+
+
 func is_carrying() -> bool:
-	return state == State.CARRYING
+	return state == State.COLLECTING
 
 
 func is_active() -> bool:
@@ -53,9 +80,11 @@ func is_completed() -> bool:
 func objective_text() -> String:
 	match state:
 		State.ACCEPTED:
-			return "Grab the bag from the kitchen trash can."
-		State.CARRYING:
-			return "Carry the trash to the container in the garden."
+			return "Grab an empty bag from the kitchen."
+		State.COLLECTING:
+			if all_pieces_collected():
+				return "Throw the full bag in the garden bin."
+			return "Find the trash: %d/%d." % [pieces_collected(), TRASH_TOTAL]
 		State.DELIVERED:
 			return "Return to Desi."
 		State.COMPLETED:

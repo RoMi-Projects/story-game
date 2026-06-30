@@ -1,4 +1,4 @@
-[gd_scene load_steps=14 format=3]
+[gd_scene load_steps=19 format=3]
 
 [ext_resource type="Texture2D" path="res://assets/garden_grass.png" id="1"]
 [ext_resource type="Texture2D" path="res://assets/fence.png" id="2"]
@@ -11,6 +11,11 @@
 [ext_resource type="PackedScene" path="res://scenes/QuestLog.tscn" id="9"]
 [ext_resource type="PackedScene" path="res://scenes/TrashContainer.tscn" id="10"]
 [ext_resource type="PackedScene" path="res://scenes/Door.tscn" id="11"]
+[ext_resource type="PackedScene" path="res://scenes/TrashPiece.tscn" id="12"]
+[ext_resource type="PackedScene" path="res://scenes/TrashCounter.tscn" id="13"]
+[ext_resource type="Texture2D" path="res://assets/trash_can_litter.png" id="14"]
+[ext_resource type="Texture2D" path="res://assets/trash_banana.png" id="15"]
+[ext_resource type="Texture2D" path="res://assets/trash_paper.png" id="16"]
 
 [sub_resource type="RectangleShape2D" id="FenceHorizontal"]
 size = Vector2(320, 16)
@@ -98,6 +103,21 @@ shape = SubResource("FenceVertical")
 [node name="TrashContainer" parent="." instance=ExtResource("10")]
 position = Vector2(44, 86)
 
+[node name="TrashPiece1" parent="." instance=ExtResource("12")]
+position = Vector2(240, 60)
+texture = ExtResource("14")
+piece_id = "garden_1"
+
+[node name="TrashPiece2" parent="." instance=ExtResource("12")]
+position = Vector2(120, 116)
+texture = ExtResource("15")
+piece_id = "garden_2"
+
+[node name="TrashPiece3" parent="." instance=ExtResource("12")]
+position = Vector2(250, 140)
+texture = ExtResource("16")
+piece_id = "garden_3"
+
 [node name="DoorToHouse" parent="." instance=ExtResource("11")]
 position = Vector2(160, 30)
 target_scene = "res://scenes/House.tscn"
@@ -118,3 +138,5 @@ position = Vector2(160, 90)
 [node name="InventoryPanel" parent="." instance=ExtResource("8")]
 
 [node name="QuestLog" parent="." instance=ExtResource("9")]
+
+[node name="TrashCounter" parent="." instance=ExtResource("13")]
