@@ -32,6 +32,9 @@ generated from scratch.
 | `scripts/*.gd` | One script per scene above (player, npc, door, popups, panels, marker) |
 | `assets/*.png` | Generated art (do not edit by hand) |
 | `tools/generate_assets.py` | Draws every PNG in `assets/` |
+| `tools/pixel_font.py` | Draws the bitmap UI font (`assets/font.png` / `.fnt`) |
+| `tests/run_tests.gd` | Headless regression suite |
+| `.github/workflows/tests.yml` | CI: runs the suite on every PR and on `main` |
 
 ## Regenerate the art
 
@@ -39,6 +42,20 @@ generated from scratch.
 python3 -m pip install Pillow      # one time
 python3 tools/generate_assets.py   # rewrites assets/*.png
 ```
+
+## Tests
+
+A headless regression suite covers the quest state machine, the inventory's
+quest-item handling, the bitmap UI font, the themed popup background, and the
+item popup's readable description. Run it locally:
+
+```sh
+godot --headless --script res://tests/run_tests.gd
+```
+
+It prints a `PASS`/`FAIL` line per check and exits non-zero if any fail.
+**GitHub Actions** (`.github/workflows/tests.yml`) runs the same suite — plus a
+smoke-boot of the game — on every pull request and on every push to `main`.
 
 ## Run the game
 
