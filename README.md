@@ -15,11 +15,11 @@ matching subfolders. File names are **snake_case** throughout.
 | --- | --- |
 | `project.godot` | Godot project settings (rendering, input map, autoloads, main scene) |
 | `scripts/autoload/` | Global singletons: `game_state`, `inventory`, `quest_manager`, `interaction_manager`, `build_mode` |
-| `scripts/core/` | `character.gd` — reusable base (`Character`): walking, facing, walk-cycle animation |
-| `scripts/actors/` & `scenes/actors/` | The player, Desi (npc), and the garden mouse |
+| `scripts/core/` | Reusable bases: `Character` (walking/facing/wander) and `InteractiveCharacter` (talk-to NPCs) |
+| `scripts/actors/` & `scenes/actors/` | The player, Desi (npc), the garden mouse, and Baby the cat |
 | `scripts/world/` & `scenes/world/` | The house, garden, doors, and placeable furniture |
 | `scripts/quest/` & `scenes/quest/` | The trash quest objects: can, container, pieces, and the `!`/`✓` marker |
-| `scripts/combat/` & `scenes/combat/` | The Pokemon-style mouse encounter + its pure `combat_rules.gd` odds |
+| `scripts/combat/` & `scenes/combat/` | The Pokemon-style mouse & cat encounters (shared `CombatScene` base) + pure `combat_rules.gd` odds |
 | `scripts/ui/` & `scenes/ui/` | Dialogue box, item popup, inventory panel, quest log, touch controls, trash counter |
 | `scenes/world/house.tscn` | Main scene: floor, walls, furniture, Desi, the trash can, the garden door |
 | `assets/*.png` | Generated art (do not edit by hand) |
@@ -122,3 +122,19 @@ charges and you lose (you wake up back in the house and Desi walks over —
 
 Once the fight is over the mouse is gone from the garden; it only comes back
 after you've returned to the house and come out again.
+
+## Baby the cat (combat)
+
+**Baby** the cat also roams the garden. Walk up and **interact** and she just
+meows, crossly — unless you're **carrying the trash bag**, in which case the
+interaction turns into a **fight**. You get **one action**:
+
+- **Pet the cat** — **20%** she is charmed: she purrs, you part as friends, and
+  you keep your bag.
+- **Call him** — bravado; it changes nothing about how the turn ends.
+- **Go away** — you always back off and leave.
+
+If you don't win or leave, **Baby takes a turn**: **50%** she shreds your trash
+bag — your count resets to **0** and you flee home, where Desi walks over
+(*"Baby scared you off again?"*) — otherwise she loses interest and the fight
+ends.

@@ -5,13 +5,14 @@ extends Node
 ## `_ready`. If none is set (e.g. first launch), the player keeps the position
 ## placed in the scene. It also remembers whether the garden mouse is currently
 ## "gone" (so it stays away after a fight until the player visits the house and
-## comes back) and whether the player just lost a fight (so Desi can react).
+## comes back) and which creature, if any, just beat the player (so Desi can
+## react to the right culprit — the mouse or the cat).
 
 var _spawn := Vector2.ZERO
 var _has_spawn := false
 
 var _mouse_active := true
-var _lost_to_mouse := false
+var _loss_enemy := ""
 
 
 func set_spawn(position: Vector2) -> void:
@@ -40,11 +41,13 @@ func activate_mouse() -> void:
 	_mouse_active = true
 
 
-func flag_mouse_loss() -> void:
-	_lost_to_mouse = true
+func flag_loss(enemy: String) -> void:
+	_loss_enemy = enemy
 
 
-func take_mouse_loss() -> bool:
-	var lost := _lost_to_mouse
-	_lost_to_mouse = false
-	return lost
+## Returns the creature that last beat the player ("mouse" / "cat"), then clears
+## it. An empty string means there is no unread loss.
+func take_loss() -> String:
+	var enemy := _loss_enemy
+	_loss_enemy = ""
+	return enemy

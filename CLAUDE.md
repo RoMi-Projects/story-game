@@ -66,11 +66,18 @@ styleboxes itself — otherwise popups lose their background.
 
 **Class hierarchy (reuse-driven):**
 - `Character` (`scripts/core/character.gd`, `extends CharacterBody2D`) — shared
-  walking, facing, and 4-row×4-frame walk-cycle animation. `walk_speed` is
-  `@export`ed and set per scene. **`Player`, `Desi`, and the garden `Mouse` all
-  extend this**; a new walking character should too and just decide *where* to
-  walk. (`Mouse` runs with `collision_layer`/`mask = 0` and clamps itself to the
-  garden bounds, so it never fights the physics engine while chasing.)
+  walking, facing, 4-row×4-frame walk-cycle animation, **and `wander(delta)`**
+  (roam-box strolling, tuned by the `@export`ed `roam_min`/`roam_max`/`pause_*`
+  set per scene). **`Player`, the garden `Mouse`, and (via `InteractiveCharacter`)
+  `Desi` and `Cat` all extend this**; a new walking character should too and just
+  decide *where* to walk. (`Mouse` and `Cat` run with `collision_layer`/`mask = 0`
+  and clamp/keep to the garden roam box, so they never fight the physics engine.)
+- `InteractiveCharacter` (`scripts/core/interactive_character.gd`, `extends
+  Character`) — a walking character the player can talk to: it registers with
+  `InteractionManager` while the player is inside its `InteractionArea` and offers
+  a `_say()` dialogue helper. **`Desi` (npc) and `Cat` (Baby) extend it**;
+  subclasses override `on_primary()` + `_speaker()` (and optional
+  `_on_player_entered/exited()` hooks).
 - `QuestObject` (`scripts/quest/quest_object.gd`, `extends StaticBody2D`) — solid
   inspect/use objects (trash can, container). Owns sprite + interaction
   registration + inspect popup + a quest marker shown when `_wants_marker()` is
@@ -78,18 +85,27 @@ styleboxes itself — otherwise popups lose their background.
   `_wants_marker()`. `TrashPiece` extends it too but has no collision so the
   player walks over it.
 
-**Combat.** The `Mouse` chases the player and, on contact, stores the player's
-position in `GameState` and swaps to `scenes/combat/combat.tscn` (a real scene
-swap, not an overlay). Combat is **one player action** (throw bag / scream / run),
-then — if unresolved — **one mouse turn**, then it ends; there is no multi-round
-loop. The odds live in `scripts/combat/combat_rules.gd` as pure static functions taking a
-`RandomNumberGenerator`, so they're unit-tested without the scene. Outcomes route
-back via `change_scene_to_file`: any non-loss returns to the garden with the
-mouse suppressed (`GameState.suppress_mouse()`); a loss goes to the house and
-sets `flag_mouse_loss()`. `Desi._ready` (house only) calls `activate_mouse()` so
-the mouse respawns on the next garden visit, and consumes `take_mouse_loss()` to
-walk over and react. A missed throw calls `QuestManager.drop_bag()` (resets the
-collection to 0; pieces reappear on the next scene load).
+**Combat.** Both encounters share `CombatScene` (`scripts/combat/combat_scene.gd`,
+`extends Control`), which owns the dice seed, the `_announce()` message beat, the
+menu lock, `_lose_bag()`, and the routes home (`_return_to_garden()` /
+`_retreat_to_house(enemy)`). Each fight is **one player action**, then — if
+unresolved — **one enemy turn**, then it ends; there is no multi-round loop. The
+odds live in `scripts/combat/combat_rules.gd` as pure static functions taking a
+`RandomNumberGenerator`, so they're unit-tested without a scene.
+- **Mouse** (`combat.gd` / `combat.tscn`): the `Mouse` *chases* and, on contact,
+  swaps scenes. Actions: throw bag / scream / run. A non-loss returns to the
+  garden with the mouse suppressed (`GameState.suppress_mouse()`); a loss goes to
+  the house. A missed throw calls `QuestManager.drop_bag()` (count → 0).
+- **Cat / Baby** (`cat.gd` + `cat_combat.gd` / `cat_combat.tscn`): the `Cat` is an
+  `InteractiveCharacter`; her fight starts **on interaction, only while
+  `QuestManager.is_carrying()`** (otherwise she just meows with an angry
+  portrait). Actions: pet (20% win → happy sprite swap) / call / go away. On the
+  cat turn she may **break the bag** (50%): `_lose_bag()` + retreat to the house.
+  Baby is *not* suppressed — she stays in the garden.
+
+Losses set `GameState.flag_loss(enemy)` ("mouse"/"cat"); `Desi._ready` (house
+only) calls `activate_mouse()` and consumes `take_loss()` to walk over and react
+to the right culprit.
 
 **Cross-scene state.** Trash pieces live in both `scenes/world/house.tscn` and
 `scenes/world/garden.tscn`, each with an `@export piece_id`. On `_ready` a piece

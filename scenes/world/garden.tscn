@@ -1,4 +1,4 @@
-[gd_scene load_steps=20 format=3]
+[gd_scene load_steps=21 format=3]
 
 [ext_resource type="Texture2D" path="res://assets/garden_grass.png" id="1"]
 [ext_resource type="Texture2D" path="res://assets/fence.png" id="2"]
@@ -17,6 +17,7 @@
 [ext_resource type="Texture2D" path="res://assets/trash_banana.png" id="15"]
 [ext_resource type="Texture2D" path="res://assets/trash_paper.png" id="16"]
 [ext_resource type="PackedScene" path="res://scenes/actors/mouse.tscn" id="17"]
+[ext_resource type="PackedScene" path="res://scenes/actors/cat.tscn" id="18"]
 
 [sub_resource type="RectangleShape2D" id="FenceHorizontal"]
 size = Vector2(320, 16)
@@ -121,6 +122,9 @@ piece_id = "garden_3"
 
 [node name="Mouse" parent="." instance=ExtResource("17")]
 position = Vector2(244, 104)
+
+[node name="Cat" parent="." instance=ExtResource("18")]
+position = Vector2(80, 120)
 
 [node name="DoorToHouse" parent="." instance=ExtResource("11")]
 position = Vector2(160, 30)

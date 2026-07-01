@@ -20,9 +20,12 @@ func _initialize() -> void:
 	_test_character_faces_its_movement_direction()
 	_test_throwing_the_bag_resets_the_collection()
 	_test_combat_odds_match_the_design()
+	_test_cat_combat_odds_match_the_design()
 	_test_mouse_respawn_is_remembered_across_areas()
 	_test_garden_holds_a_mouse()
+	_test_garden_holds_a_cat()
 	_test_mouse_has_a_walk_spritesheet()
+	_test_cat_has_a_walk_spritesheet()
 	_test_build_mode_starts_hidden_and_toggles()
 	_test_build_mode_grid_matches_tile_size()
 	_test_build_mode_input_is_mapped()
@@ -159,6 +162,18 @@ func _test_combat_odds_match_the_design() -> void:
 		_is_near(_ratio_over_trials(CombatRules.mouse_charges, rng, trials), CombatRules.MOUSE_CHARGE_CHANCE))
 
 
+func _test_cat_combat_odds_match_the_design() -> void:
+	var rng := RandomNumberGenerator.new()
+	rng.seed = 20240601
+	var trials := 4000
+	_check("petting the cat works about 20% of the time",
+		_is_near(_ratio_over_trials(CombatRules.cat_pet_succeeds, rng, trials), CombatRules.PET_SUCCESS_CHANCE))
+	_check("calling the cat draws it closer about half the time",
+		_is_near(_ratio_over_trials(CombatRules.cat_approaches, rng, trials), CombatRules.CALL_APPROACH_CHANCE))
+	_check("the cat breaks the bag about half the time",
+		_is_near(_ratio_over_trials(CombatRules.cat_breaks_bag, rng, trials), CombatRules.CAT_BREAKS_BAG_CHANCE))
+
+
 func _ratio_over_trials(roll: Callable, rng: RandomNumberGenerator, trials: int) -> float:
 	var hits := 0
 	for _trial in trials:
@@ -178,9 +193,9 @@ func _test_mouse_respawn_is_remembered_across_areas() -> void:
 	_check("after a fight the mouse stays gone this visit", not state.mouse_is_active())
 	state.activate_mouse()
 	_check("returning through the house brings the mouse back", state.mouse_is_active())
-	state.flag_mouse_loss()
-	_check("a loss is reported to Desi once", state.take_mouse_loss())
-	_check("the loss flag clears after it is read", not state.take_mouse_loss())
+	state.flag_loss("mouse")
+	_check("a loss names the culprit for Desi once", state.take_loss() == "mouse")
+	_check("the loss flag clears after it is read", state.take_loss() == "")
 	state.free()
 
 
@@ -213,9 +228,20 @@ func _test_garden_holds_a_mouse() -> void:
 	_check("the garden contains a mouse to fight", garden.contains("scenes/actors/mouse.tscn"))
 
 
+func _test_garden_holds_a_cat() -> void:
+	var garden := FileAccess.get_file_as_string("res://scenes/world/garden.tscn")
+	_check("the garden contains Baby the cat", garden.contains("scenes/actors/cat.tscn"))
+
+
 func _test_mouse_has_a_walk_spritesheet() -> void:
 	var sheet: Texture2D = load("res://assets/mouse_spritesheet.png")
 	_check("the mouse has a 4-direction walk spritesheet (4 rows x 4 frames)",
+		sheet.get_width() == FRAME_WIDTH * 4 and sheet.get_height() == FRAME_HEIGHT * 4)
+
+
+func _test_cat_has_a_walk_spritesheet() -> void:
+	var sheet: Texture2D = load("res://assets/cat_spritesheet.png")
+	_check("Baby the cat has a 4-direction walk spritesheet (4 rows x 4 frames)",
 		sheet.get_width() == FRAME_WIDTH * 4 and sheet.get_height() == FRAME_HEIGHT * 4)
 
 

@@ -1,20 +1,23 @@
-[gd_scene load_steps=6 format=3]
+[gd_scene load_steps=5 format=3]
 
-[ext_resource type="Script" path="res://scripts/actors/npc.gd" id="1"]
-[ext_resource type="Texture2D" path="res://assets/desi_spritesheet.png" id="2"]
-[ext_resource type="PackedScene" path="res://scenes/quest/quest_marker.tscn" id="3"]
+[ext_resource type="Script" path="res://scripts/actors/cat.gd" id="1"]
+[ext_resource type="Texture2D" path="res://assets/cat_spritesheet.png" id="2"]
 
 [sub_resource type="RectangleShape2D" id="BodyShape"]
-size = Vector2(12, 8)
+size = Vector2(12, 6)
 
 [sub_resource type="RectangleShape2D" id="AreaShape"]
 size = Vector2(44, 44)
 
-[node name="Desi" type="CharacterBody2D"]
+[node name="Cat" type="CharacterBody2D"]
+collision_layer = 0
+collision_mask = 0
 script = ExtResource("1")
-walk_speed = 26.0
-roam_min = Vector2(40, 44)
-roam_max = Vector2(280, 148)
+walk_speed = 30.0
+roam_min = Vector2(28, 28)
+roam_max = Vector2(292, 156)
+pause_min = 0.5
+pause_max = 1.8
 
 [node name="Sprite" type="Sprite2D" parent="."]
 texture = ExtResource("2")
@@ -30,9 +33,3 @@ shape = SubResource("BodyShape")
 [node name="AreaShape" type="CollisionShape2D" parent="InteractionArea"]
 position = Vector2(0, 4)
 shape = SubResource("AreaShape")
-
-[node name="QuestMarker" parent="." instance=ExtResource("3")]
-position = Vector2(0, -18)
-
-[node name="Heart" type="Sprite2D" parent="."]
-position = Vector2(9, -16)
