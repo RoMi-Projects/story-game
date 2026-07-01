@@ -23,25 +23,29 @@ func unregister(interactable: Node) -> void:
 
 
 func _process(_delta: float) -> void:
-	var target := _nearest_interactable()
-	if target == null:
-		return
 	if Input.is_action_just_pressed("interact"):
-		target.on_primary()
-	elif Input.is_action_just_pressed("pickup") and target.has_method("on_secondary"):
-		target.on_secondary()
+		var target := _nearest_interactable()
+		if target != null:
+			target.on_primary()
+	elif Input.is_action_just_pressed("pickup"):
+		# Pick the nearest object that can actually be picked up, so a non-pickable
+		# object standing between you and the furniture (a trash piece, a wall
+		# fixture) doesn't swallow the press.
+		var target := _nearest_interactable(true)
+		if target != null:
+			target.on_secondary()
 
 
-func _nearest_interactable() -> Node:
+func _nearest_interactable(must_pick_up := false) -> Node:
 	_drop_freed_interactables()
-	if _in_range.is_empty():
-		return null
 	var player := _get_player()
-	if player == null:
-		return _in_range[0]
 	var nearest: Node = null
 	var nearest_distance := INF
 	for interactable in _in_range:
+		if must_pick_up and not interactable.has_method("on_secondary"):
+			continue
+		if player == null:
+			return interactable
 		var distance: float = player.global_position.distance_squared_to(interactable.global_position)
 		if distance < nearest_distance:
 			nearest_distance = distance

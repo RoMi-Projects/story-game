@@ -25,6 +25,7 @@ func _bag_it() -> void:
 	if popup != null:
 		popup.close()
 	InteractionManager.unregister(self)
+	_release_occupancy()
 	QuestManager.collect_piece(piece_id)
 	queue_free()
 

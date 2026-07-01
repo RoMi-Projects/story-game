@@ -64,6 +64,32 @@ styleboxes itself — otherwise popups lose their background.
   column/row indices, to make hand-placing nodes in the `.tscn` files easy. It
   aligns 1:1 only because the camera shows the whole 320×180 world unscrolled.
 
+**World construction (16px grid).** Walls/fences are a **`TileMapLayer`** named
+`Walls` in each world scene, driven by `assets/world_tileset.tres` (atlas
+`tileset_atlas.png`, tiles: wall / wall_window / wall_portrait / fence / floor /
+grass / path). Collision comes from the TileSet's physics layer — there are **no
+hardcoded wall rectangles**. A wall-mounted object *is* a wall tile: the window
+and portrait are the `wall_window`/`wall_portrait` tiles (rule: a wall object
+re-skins its wall cell). Floor/grass/path stay as repeating background sprites (no
+physics). The TileMap is committed and **editor-paintable**; the cell bytes
+(`tile_map_data`) are generated (see `tools/` + the byte layout), not hand-typed.
+- `WorldGrid` (`scripts/world/world_grid.gd`, one per scene, group `world_grid`) —
+  the occupancy service: `to_cell`/`to_world`/`snap`, `footprint_of(texture)`
+  (ceil to whole tiles), and `is_free`/`register`/`release` over a blocked-cell set
+  seeded from the wall `TileMapLayer`. This is the API a future Sims-like
+  move/placement mode queries; it is lazy so object↔grid `_ready` order is moot.
+- `PlaceableItem` snaps to its `cell` (derived from the authored position when
+  left at `-1,-1`), sizes its collision to its **tile footprint** (auto from the
+  texture, or `footprint_override`), registers that footprint with `WorldGrid`
+  when `solid`, and releases it on pickup. `art_offset` lets a big sprite overflow
+  into a neighbouring free cell.
+- `WallFixture` (`scripts/world/wall_fixture.gd`, `scenes/world/wall_fixture.tscn`)
+  — a spriteless, non-blocking node placed over a wall-object cell purely so the
+  player can inspect it (the picture lives in the wall tile).
+- `InteractableArea` (`scripts/world/interactable_area.gd`) — a drop-in child
+  Area2D that registers its parent with `InteractionManager` on player
+  enter/exit. Reused by `PlaceableItem` and `WallFixture` so that logic lives once.
+
 **Class hierarchy (reuse-driven):**
 - `Character` (`scripts/core/character.gd`, `extends CharacterBody2D`) — shared
   walking, facing, 4-row×4-frame walk-cycle animation, **and `wander(delta)`**
@@ -81,9 +107,11 @@ styleboxes itself — otherwise popups lose their background.
 - `QuestObject` (`scripts/quest/quest_object.gd`, `extends StaticBody2D`) — solid
   inspect/use objects (trash can, container). Owns sprite + interaction
   registration + inspect popup + a quest marker shown when `_wants_marker()` is
-  true. Subclasses define `on_primary()`, `item_name()`, `description()`,
-  `_wants_marker()`. `TrashPiece` extends it too but has no collision so the
-  player walks over it.
+  true. Like `PlaceableItem` it grid-snaps via `WorldGrid.place()` (shared
+  placement maths), sizing its `Collision` to its tile footprint and registering
+  occupancy. Subclasses define `on_primary()`, `item_name()`, `description()`,
+  `_wants_marker()`. `TrashPiece` extends it too and now **blocks its tile like
+  any other object** (it releases the cell when bagged).
 
 **Combat.** Both encounters share `CombatScene` (`scripts/combat/combat_scene.gd`,
 `extends Control`), which owns the dice seed, the `_announce()` message beat, the

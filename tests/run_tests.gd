@@ -11,6 +11,16 @@ var _passed := 0
 var _failed := 0
 
 
+# Stand-ins for interactables: one that can only be inspected, one that can also
+# be picked up. Used to test how the pickup button chooses its target.
+class _InspectOnly extends Node2D:
+	func on_primary() -> void: pass
+
+class _Pickable extends Node2D:
+	func on_primary() -> void: pass
+	func on_secondary() -> void: pass
+
+
 func _initialize() -> void:
 	_test_quest_advances_through_every_step()
 	_test_quest_ignores_out_of_order_steps()
@@ -24,11 +34,19 @@ func _initialize() -> void:
 	_test_mouse_respawn_is_remembered_across_areas()
 	_test_garden_holds_a_mouse()
 	_test_garden_holds_a_cat()
+	_test_world_uses_tilemap_walls()
+	_test_world_tileset_has_physics()
+	_test_world_grid_maps_cells_and_footprints()
+	_test_world_grid_tracks_occupancy()
+	_test_wall_objects_are_inspectable_fixtures()
+	_test_trash_pieces_block_their_tile()
+	_test_pickup_targets_the_nearest_pickable()
 	_test_mouse_has_a_walk_spritesheet()
 	_test_cat_has_a_walk_spritesheet()
 	_test_build_mode_starts_hidden_and_toggles()
 	_test_build_mode_grid_matches_tile_size()
 	_test_build_mode_input_is_mapped()
+	_test_build_mode_lists_commands()
 	_test_inventory_marks_quest_items()
 	_test_inventory_removes_delivered_items()
 	_test_ui_font_is_a_crisp_bitmap()
@@ -223,6 +241,12 @@ func _test_build_mode_input_is_mapped() -> void:
 	_check("build mode has a toggle key bound", settings.contains("toggle_build_mode={"))
 
 
+func _test_build_mode_lists_commands() -> void:
+	var build = load("res://scripts/autoload/build_mode.gd").new()
+	_check("build mode advertises the key commands as a legend", build.COMMANDS.size() >= 4)
+	build.free()
+
+
 func _test_garden_holds_a_mouse() -> void:
 	var garden := FileAccess.get_file_as_string("res://scenes/world/garden.tscn")
 	_check("the garden contains a mouse to fight", garden.contains("scenes/actors/mouse.tscn"))
@@ -231,6 +255,83 @@ func _test_garden_holds_a_mouse() -> void:
 func _test_garden_holds_a_cat() -> void:
 	var garden := FileAccess.get_file_as_string("res://scenes/world/garden.tscn")
 	_check("the garden contains Baby the cat", garden.contains("scenes/actors/cat.tscn"))
+
+
+# --- grid world ----------------------------------------------------------------
+
+func _test_world_uses_tilemap_walls() -> void:
+	for path in ["res://scenes/world/house.tscn", "res://scenes/world/garden.tscn"]:
+		var text := FileAccess.get_file_as_string(path)
+		_check(path + " builds walls from a TileMapLayer", text.contains("type=\"TileMapLayer\""))
+		_check(path + " dropped the hardcoded wall rectangles",
+			not text.contains("WallHorizontal") and not text.contains("FenceHorizontal"))
+		_check(path + " wires the WorldGrid occupancy service", text.contains("world_grid"))
+
+
+func _test_world_tileset_has_physics() -> void:
+	var tileset: TileSet = load("res://assets/world_tileset.tres")
+	_check("the world tileset loads", tileset != null)
+	_check("solid tiles carry a physics layer", tileset.get_physics_layers_count() >= 1)
+
+
+func _test_world_grid_maps_cells_and_footprints() -> void:
+	var grid = load("res://scripts/world/world_grid.gd").new()
+	_check("a pixel maps to its 16px cell", grid.to_cell(Vector2(40, 20)) == Vector2i(2, 1))
+	_check("a cell maps back to its top-left pixel", grid.to_world(Vector2i(2, 1)) == Vector2(32, 16))
+	var counter: Texture2D = load("res://assets/kitchen_counter.png")
+	_check("a 48x28 sprite needs a 3x2 footprint", WorldGrid.footprint_of(counter) == Vector2i(3, 2))
+	grid.free()
+
+
+func _test_world_grid_tracks_occupancy() -> void:
+	var grid = load("res://scripts/world/world_grid.gd").new()
+	_check("an empty cell starts free", grid.is_free(Vector2i(5, 5), Vector2i(1, 1)))
+	grid.register(Vector2i(5, 5), Vector2i(2, 1))
+	_check("a registered cell is no longer free", not grid.is_free(Vector2i(5, 5), Vector2i(1, 1)))
+	_check("an overlapping placement is blocked", not grid.is_free(Vector2i(6, 5), Vector2i(2, 2)))
+	_check("a clear neighbour stays free", grid.is_free(Vector2i(5, 6), Vector2i(1, 1)))
+	grid.release(Vector2i(5, 5), Vector2i(2, 1))
+	_check("releasing frees the cells again", grid.is_free(Vector2i(5, 5), Vector2i(2, 1)))
+	grid.free()
+
+
+func _test_wall_objects_are_inspectable_fixtures() -> void:
+	var house := FileAccess.get_file_as_string("res://scenes/world/house.tscn")
+	_check("the window/portrait are inspectable wall fixtures",
+		house.contains("scenes/world/wall_fixture.tscn"))
+	var placeable := FileAccess.get_file_as_string("res://scenes/world/placeable_item.tscn")
+	_check("furniture reuses the shared InteractableArea component",
+		placeable.contains("scripts/world/interactable_area.gd"))
+
+
+func _test_trash_pieces_block_their_tile() -> void:
+	var piece := FileAccess.get_file_as_string("res://scenes/quest/trash_piece.tscn")
+	_check("a trash piece has a collision body so it blocks its tile",
+		piece.contains("name=\"Collision\""))
+
+
+func _test_pickup_targets_the_nearest_pickable() -> void:
+	var manager = load("res://scripts/autoload/interaction_manager.gd").new()
+	get_root().add_child(manager)
+	var player := Node2D.new()
+	player.add_to_group("player")
+	get_root().add_child(player)
+	var inspect_only := _InspectOnly.new()
+	inspect_only.global_position = Vector2(6, 0)
+	get_root().add_child(inspect_only)
+	var pickable := _Pickable.new()
+	pickable.global_position = Vector2(24, 0)
+	get_root().add_child(pickable)
+	manager.register(inspect_only)
+	manager.register(pickable)
+	_check("interact targets the closest interactable",
+		manager._nearest_interactable() == inspect_only)
+	_check("pickup skips the closer non-pickable and finds the pickable one",
+		manager._nearest_interactable(true) == pickable)
+	manager.free()
+	player.free()
+	inspect_only.free()
+	pickable.free()
 
 
 func _test_mouse_has_a_walk_spritesheet() -> void:

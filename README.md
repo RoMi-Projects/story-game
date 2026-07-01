@@ -1,7 +1,7 @@
 # Story Game
 
 A Stardew Valley–style game. The player walks around a decorated house and an
-adjoining garden (keyboard or on-screen buttons), talks to an NPC (Desi),
+adjoining garden with the keyboard, talks to an NPC (Desi),
 inspects or picks up furniture into an inventory, and completes the first
 quest — "Take Out the Trash". Built in **Godot 4**, with all pixel art
 generated from scratch.
@@ -17,7 +17,7 @@ matching subfolders. File names are **snake_case** throughout.
 | `scripts/autoload/` | Global singletons: `game_state`, `inventory`, `quest_manager`, `interaction_manager`, `build_mode` |
 | `scripts/core/` | Reusable bases: `Character` (walking/facing/wander) and `InteractiveCharacter` (talk-to NPCs) |
 | `scripts/actors/` & `scenes/actors/` | The player, Desi (npc), the garden mouse, and Baby the cat |
-| `scripts/world/` & `scenes/world/` | The house, garden, doors, and placeable furniture |
+| `scripts/world/` & `scenes/world/` | The house, garden, doors, grid-snapping placeable furniture, the `WorldGrid` occupancy service, and wall fixtures. Walls are a `TileMapLayer` driven by `assets/world_tileset.tres` |
 | `scripts/quest/` & `scenes/quest/` | The trash quest objects: can, container, pieces, and the `!`/`✓` marker |
 | `scripts/combat/` & `scenes/combat/` | The Pokemon-style mouse & cat encounters (shared `CombatScene` base) + pure `combat_rules.gd` odds |
 | `scripts/ui/` & `scenes/ui/` | Dialogue box, item popup, inventory panel, quest log, touch controls, trash counter |
@@ -57,8 +57,7 @@ smoke-boot of the game — on every pull request and on every push to `main`.
    godot --path .          # opens the editor (imports assets on first run)
    ```
 3. Press **F5** (or the Play button) to launch.
-4. Move with **arrow keys / WASD** or the **on-screen buttons**. The character
-   cannot leave the room.
+4. Move with **arrow keys / WASD**. The character cannot leave the room.
 
 ### Installing Godot 4 on macOS
 
@@ -67,14 +66,17 @@ smoke-boot of the game — on every pull request and on every push to `main`.
 
 ## Controls
 
-| Action | Keys | Touch |
-| --- | --- | --- |
-| Move | Arrow keys / WASD | On-screen D-pad |
-| Interact / inspect / talk | Space / E / Enter | **A** button |
-| Pick up | F | **B** button |
-| Inventory | I / Tab | **I** button |
-| Quest log | J | **Q** button |
-| Build mode (tile grid) | B | — |
+| Action | Keys |
+| --- | --- |
+| Move | Arrow keys / WASD |
+| Interact / inspect / talk | Space / E / Enter |
+| Pick up | F |
+| Inventory | I / Tab |
+| Quest log | J |
+| Build mode (tile grid + command legend) | B |
+
+The game is keyboard-driven; the on-screen touch buttons have been removed for the
+desktop build (the `touch_controls` scene is kept for the future mobile target).
 
 - Stand next to any piece of **furniture** and press Interact to see its name and
   a description. Press Pick up to remove it into your inventory (each item is its
@@ -82,8 +84,9 @@ smoke-boot of the game — on every pull request and on every push to `main`.
 - Walk through the **door** (bottom-left of the house) to reach the garden, and
   the door in the garden to return.
 - Press **B** for **Build mode** — a developer overlay that draws the world's
-  16×16 tile grid with column/row indices, so you can read a cell's coordinates
-  when hand-placing furniture in the scene files. Press **B** again to hide it.
+  16×16 tile grid with column/row indices (for reading a cell's coordinates when
+  hand-placing furniture) plus a **legend of every key command**. Press **B**
+  again to hide it.
 
 ## The "Take Out the Trash" quest
 
