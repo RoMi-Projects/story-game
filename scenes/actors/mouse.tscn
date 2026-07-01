@@ -11,6 +11,10 @@ collision_layer = 0
 collision_mask = 0
 script = ExtResource("1")
 walk_speed = 52.0
+roam_min = Vector2(28, 28)
+roam_max = Vector2(292, 156)
+pause_min = 0.3
+pause_max = 1.2
 
 [node name="Sprite" type="Sprite2D" parent="."]
 texture = ExtResource("2")

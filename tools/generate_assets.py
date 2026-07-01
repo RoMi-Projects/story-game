@@ -119,6 +119,12 @@ PALETTE = {
     "mouse_ear": (214, 150, 158, 255),
     "mouse_nose": (224, 126, 138, 255),
     "mouse_eye": (38, 34, 40, 255),
+    "cat_body": (226, 158, 92, 255),
+    "cat_dark": (184, 120, 62, 255),
+    "cat_belly": (244, 216, 172, 255),
+    "cat_ear": (232, 176, 150, 255),
+    "cat_nose": (214, 120, 120, 255),
+    "cat_eye": (86, 150, 96, 255),
     "sky": (180, 214, 232, 255),
     "sky_low": (206, 230, 240, 255),
 }
@@ -1046,6 +1052,190 @@ def draw_desi_smile():
     return image
 
 
+# --- Baby the cat and her combat scene -----------------------------------------
+
+def draw_cat_spritesheet():
+    rows = ["down", "up", "left", "right"]
+    sheet = new_image(FRAME_WIDTH * WALK_FRAME_COUNT, FRAME_HEIGHT * len(rows))
+    for row_index, facing in enumerate(rows):
+        for frame in range(WALK_FRAME_COUNT):
+            cell = _draw_cat_cell(facing, frame)
+            sheet.paste(cell, (frame * FRAME_WIDTH, row_index * FRAME_HEIGHT))
+    return sheet
+
+
+def _draw_cat_cell(facing, frame):
+    image = new_image(FRAME_WIDTH, FRAME_HEIGHT)
+    pixels = image.load()
+    _draw_cat_tail(pixels, facing)
+    _draw_cat_body(pixels)
+    _draw_cat_ears(pixels, facing)
+    _draw_cat_face(pixels, facing)
+    _draw_cat_feet(pixels, frame)
+    return image
+
+
+def _draw_cat_body(pixels):
+    fill_rect(pixels, 5, 12, 10, 21, PALETTE["cat_body"])
+    fill_rect(pixels, 6, 11, 9, 11, PALETTE["cat_body"])
+    fill_rect(pixels, 5, 21, 10, 21, PALETTE["cat_dark"])
+    fill_rect(pixels, 6, 13, 9, 13, PALETTE["cat_dark"])
+
+
+def _draw_cat_tail(pixels, facing):
+    if facing == "up":
+        fill_rect(pixels, 10, 12, 11, 17, PALETTE["cat_body"])
+        pixels[11, 12] = PALETTE["cat_dark"]
+    elif facing == "down":
+        fill_rect(pixels, 10, 18, 12, 22, PALETTE["cat_body"])
+    elif facing == "left":
+        fill_rect(pixels, 11, 14, 13, 15, PALETTE["cat_body"])
+        pixels[13, 13] = PALETTE["cat_body"]
+    else:
+        fill_rect(pixels, 2, 14, 4, 15, PALETTE["cat_body"])
+        pixels[2, 13] = PALETTE["cat_body"]
+
+
+def _draw_cat_ears(pixels, facing):
+    if facing in ("up", "down"):
+        pixels[4, 9] = PALETTE["cat_body"]
+        fill_rect(pixels, 4, 10, 5, 11, PALETTE["cat_body"])
+        pixels[11, 9] = PALETTE["cat_body"]
+        fill_rect(pixels, 10, 10, 11, 11, PALETTE["cat_body"])
+        if facing == "down":
+            pixels[5, 11] = PALETTE["cat_ear"]
+            pixels[10, 11] = PALETTE["cat_ear"]
+    else:
+        pixels[7, 9] = PALETTE["cat_body"]
+        fill_rect(pixels, 7, 10, 8, 11, PALETTE["cat_body"])
+
+
+def _draw_cat_face(pixels, facing):
+    if facing == "up":
+        return
+    if facing == "down":
+        fill_rect(pixels, 6, 15, 9, 19, PALETTE["cat_belly"])
+        pixels[6, 15] = PALETTE["cat_eye"]
+        pixels[9, 15] = PALETTE["cat_eye"]
+        pixels[7, 17] = PALETTE["cat_nose"]
+        pixels[8, 17] = PALETTE["cat_nose"]
+        pixels[4, 17] = PALETTE["cat_dark"]
+        pixels[11, 17] = PALETTE["cat_dark"]
+        return
+    if facing == "left":
+        fill_rect(pixels, 3, 15, 4, 17, PALETTE["cat_body"])
+        pixels[3, 16] = PALETTE["cat_nose"]
+        pixels[6, 14] = PALETTE["cat_eye"]
+        pixels[2, 16] = PALETTE["cat_dark"]
+    else:
+        fill_rect(pixels, 11, 15, 12, 17, PALETTE["cat_body"])
+        pixels[12, 16] = PALETTE["cat_nose"]
+        pixels[9, 14] = PALETTE["cat_eye"]
+        pixels[13, 16] = PALETTE["cat_dark"]
+
+
+def _draw_cat_feet(pixels, frame):
+    left_raised = frame == 1
+    right_raised = frame == 3
+    fill_rect(pixels, 5, 21 if left_raised else 22, 6, 22 if left_raised else 23,
+              PALETTE["cat_dark"])
+    fill_rect(pixels, 9, 21 if right_raised else 22, 10, 22 if right_raised else 23,
+              PALETTE["cat_dark"])
+
+
+def draw_cat_battle():
+    return _draw_cat_battle(happy=False)
+
+
+def draw_cat_battle_happy():
+    return _draw_cat_battle(happy=True)
+
+
+def _draw_cat_battle(happy):
+    image = new_image(48, 40)
+    pixels = image.load()
+    # tail, curling up behind to the right
+    fill_rect(pixels, 34, 20, 41, 23, PALETTE["cat_body"])
+    fill_rect(pixels, 39, 12, 41, 21, PALETTE["cat_body"])
+    pixels[40, 12] = PALETTE["cat_dark"]
+    # body
+    fill_rect(pixels, 12, 14, 34, 33, PALETTE["cat_body"])
+    fill_rect(pixels, 14, 12, 32, 13, PALETTE["cat_body"])
+    fill_rect(pixels, 12, 33, 34, 34, PALETTE["cat_dark"])
+    fill_rect(pixels, 17, 22, 29, 33, PALETTE["cat_belly"])
+    # tabby stripes
+    fill_rect(pixels, 14, 16, 32, 16, PALETTE["cat_dark"])
+    fill_rect(pixels, 14, 19, 15, 32, PALETTE["cat_dark"])
+    fill_rect(pixels, 31, 19, 32, 32, PALETTE["cat_dark"])
+    # pointy ears
+    fill_rect(pixels, 10, 5, 15, 12, PALETTE["cat_body"])
+    fill_rect(pixels, 29, 5, 34, 12, PALETTE["cat_body"])
+    pixels[10, 4] = PALETTE["cat_body"]
+    pixels[34, 4] = PALETTE["cat_body"]
+    fill_rect(pixels, 11, 8, 13, 11, PALETTE["cat_ear"])
+    fill_rect(pixels, 31, 8, 33, 11, PALETTE["cat_ear"])
+    # eyes
+    if happy:
+        for x, y in [(16, 19), (17, 18), (18, 18), (19, 19)]:
+            pixels[x, y] = PALETTE["cat_eye"]
+        for x, y in [(25, 19), (26, 18), (27, 18), (28, 19)]:
+            pixels[x, y] = PALETTE["cat_eye"]
+    else:
+        fill_rect(pixels, 16, 18, 18, 20, PALETTE["cat_eye"])
+        fill_rect(pixels, 26, 18, 28, 20, PALETTE["cat_eye"])
+    # nose and mouth
+    fill_rect(pixels, 21, 23, 23, 24, PALETTE["cat_nose"])
+    if happy:
+        for x, y in [(19, 26), (20, 27), (21, 27), (23, 27), (24, 27), (25, 26)]:
+            pixels[x, y] = PALETTE["cat_dark"]
+    # whiskers
+    fill_rect(pixels, 10, 25, 17, 25, PALETTE["cat_dark"])
+    fill_rect(pixels, 27, 25, 34, 25, PALETTE["cat_dark"])
+    # feet
+    fill_rect(pixels, 14, 34, 18, 36, PALETTE["cat_dark"])
+    fill_rect(pixels, 28, 34, 32, 36, PALETTE["cat_dark"])
+    return image
+
+
+def _draw_cat_ear(pixels, cx, base_y, height, color):
+    for i in range(height + 1):
+        span = height - i
+        fill_rect(pixels, cx - span, base_y - i, cx + span, base_y - i, color)
+
+
+def draw_cat_angry():
+    image = new_image(32, 32)
+    pixels = image.load()
+    fill_rect(pixels, 0, 0, 31, 31, PALETTE["portrait_back"])
+    _draw_cat_ear(pixels, 11, 11, 5, PALETTE["cat_body"])
+    _draw_cat_ear(pixels, 20, 11, 5, PALETTE["cat_body"])
+    _draw_cat_ear(pixels, 11, 10, 2, PALETTE["cat_ear"])
+    _draw_cat_ear(pixels, 20, 10, 2, PALETTE["cat_ear"])
+    # head
+    fill_rect(pixels, 7, 11, 24, 27, PALETTE["cat_body"])
+    fill_rect(pixels, 7, 27, 24, 28, PALETTE["cat_dark"])
+    fill_rect(pixels, 11, 20, 20, 27, PALETTE["cat_belly"])
+    # tabby forehead stripes
+    fill_rect(pixels, 14, 12, 14, 15, PALETTE["cat_dark"])
+    fill_rect(pixels, 17, 12, 17, 15, PALETTE["cat_dark"])
+    # angry, slanted green eyes
+    for x, y in [(10, 16), (11, 17), (12, 17), (13, 18)]:
+        pixels[x, y] = PALETTE["cat_eye"]
+    for x, y in [(21, 16), (20, 17), (19, 17), (18, 18)]:
+        pixels[x, y] = PALETTE["cat_eye"]
+    pixels[12, 17] = PALETTE["outline"]
+    pixels[19, 17] = PALETTE["outline"]
+    # nose and a frowning mouth
+    fill_rect(pixels, 15, 21, 16, 22, PALETTE["cat_nose"])
+    for x, y in [(13, 24), (14, 23), (15, 23), (16, 23), (17, 23), (18, 24)]:
+        pixels[x, y] = PALETTE["mouth"]
+    # whiskers
+    fill_rect(pixels, 4, 22, 10, 22, PALETTE["cat_dark"])
+    fill_rect(pixels, 21, 22, 27, 22, PALETTE["cat_dark"])
+    _draw_anger_mark(pixels)
+    return image
+
+
 # --- entry point ---------------------------------------------------------------
 
 def assets_directory():
@@ -1072,6 +1262,10 @@ def main():
     save(draw_desi_smile(), "desi_smile.png", directory)
     save(draw_mouse_spritesheet(), "mouse_spritesheet.png", directory)
     save(draw_mouse_battle(), "mouse_battle.png", directory)
+    save(draw_cat_spritesheet(), "cat_spritesheet.png", directory)
+    save(draw_cat_battle(), "cat_battle.png", directory)
+    save(draw_cat_battle_happy(), "cat_battle_happy.png", directory)
+    save(draw_cat_angry(), "cat_angry.png", directory)
     save(draw_player_battle(), "player_battle.png", directory)
     save(draw_combat_bg(), "combat_bg.png", directory)
     save(draw_player_carry_spritesheet(), "player_carry_spritesheet.png", directory)
