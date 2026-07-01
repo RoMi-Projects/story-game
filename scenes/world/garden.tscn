@@ -1,10 +1,9 @@
-[gd_scene load_steps=20 format=3]
+[gd_scene load_steps=19 format=3]
 
 [ext_resource type="Texture2D" path="res://assets/garden_grass.png" id="1"]
 [ext_resource type="TileSet" path="res://assets/world_tileset.tres" id="2"]
 [ext_resource type="Texture2D" path="res://assets/garden_path.png" id="3"]
 [ext_resource type="PackedScene" path="res://scenes/actors/player.tscn" id="4"]
-[ext_resource type="PackedScene" path="res://scenes/ui/touch_controls.tscn" id="5"]
 [ext_resource type="PackedScene" path="res://scenes/ui/dialogue_box.tscn" id="6"]
 [ext_resource type="PackedScene" path="res://scenes/ui/item_popup.tscn" id="7"]
 [ext_resource type="PackedScene" path="res://scenes/ui/inventory_panel.tscn" id="8"]
@@ -91,8 +90,6 @@ position = Vector2(160, 140)
 
 [node name="Camera2D" type="Camera2D" parent="."]
 position = Vector2(160, 90)
-
-[node name="TouchControls" parent="." instance=ExtResource("5")]
 
 [node name="DialogueBox" parent="." instance=ExtResource("6")]
 

@@ -6,7 +6,9 @@ extends StaticBody2D
 ## inventory. Collision and interaction shapes are sized from the texture, so
 ## every instance only needs its name, description, texture, and solidity.
 
-const INTERACTION_MARGIN := 8.0
+# How far the interaction reach extends beyond the blocking footprint, per side, so
+# that standing adjacent (where the footprint stops you) reliably registers.
+const INTERACTION_MARGIN := 10.0
 
 @export var item_name := ""
 @export_multiline var description := ""
@@ -35,40 +37,14 @@ func _ready() -> void:
 
 
 func _place_on_grid() -> void:
-	var grid := _grid()
-	_footprint = _resolve_footprint(grid)
+	_footprint = footprint_override if footprint_override != Vector2i.ZERO else WorldGrid.footprint_of(texture)
+	var grid := WorldGrid.of(self)
 	if grid != null:
-		var origin := cell
-		if origin.x < 0 or origin.y < 0:
-			origin = grid.to_cell(position - _footprint_extent() * 0.5)
-		position = grid.to_world(origin) + _footprint_extent() * 0.5
-		cell = origin
-		if solid:
-			grid.register(origin, _footprint, self)
-	_build_shapes()
-
-
-func _resolve_footprint(grid: WorldGrid) -> Vector2i:
-	if footprint_override != Vector2i.ZERO:
-		return footprint_override
-	if grid != null:
-		return grid.footprint_of(texture)
-	var size := texture.get_size()
-	return Vector2i(maxi(1, ceili(size.x / WorldGrid.TILE)), maxi(1, ceili(size.y / WorldGrid.TILE)))
-
-
-func _footprint_extent() -> Vector2:
-	return Vector2(_footprint) * WorldGrid.TILE
-
-
-func _build_shapes() -> void:
-	_body_shape.shape = _rectangle(_footprint_extent())
-	_body_shape.disabled = not solid
-	_area_shape.shape = _rectangle(texture.get_size() + Vector2.ONE * INTERACTION_MARGIN * 2.0)
-
-
-func _grid() -> WorldGrid:
-	return get_tree().get_first_node_in_group("world_grid") as WorldGrid
+		cell = grid.place(self, _body_shape, cell, _footprint, solid)
+	else:
+		_body_shape.shape = _rectangle(Vector2(_footprint) * WorldGrid.TILE)
+		_body_shape.disabled = not solid
+	_area_shape.shape = _rectangle(WorldGrid.interaction_extent(_footprint, INTERACTION_MARGIN))
 
 
 func _rectangle(size: Vector2) -> RectangleShape2D:
@@ -88,7 +64,7 @@ func on_primary() -> void:
 func on_secondary() -> void:
 	_close_popup()
 	if solid:
-		var grid := _grid()
+		var grid := WorldGrid.of(self)
 		if grid != null:
 			grid.release(cell, _footprint)
 	Inventory.add_item(item_name, description, texture)

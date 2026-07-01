@@ -16,6 +16,22 @@ const LINE_COLOR := Color(0.2, 0.9, 1.0, 0.35)
 const LABEL_COLOR := Color(1.0, 1.0, 0.4, 0.9)
 const LABEL_MARGIN := 2.0
 
+const PANEL_COLOR := Color(0.05, 0.06, 0.1, 0.82)
+const KEY_COLOR := Color(0.4, 1.0, 1.0, 1.0)
+const PANEL_PAD := 5.0
+const KEY_COLUMN := 64.0
+
+# The keyboard controls, shown as a legend while Build Mode is on. Now that the
+# on-screen buttons are gone this is the reference for what each key does.
+const COMMANDS := [
+	["Arrows/WASD", "Move"],
+	["Space / E", "Interact / talk"],
+	["F", "Pick up"],
+	["I / Tab", "Inventory"],
+	["J", "Quest log"],
+	["B", "Build mode"],
+]
+
 var _enabled := false
 var _layer: CanvasLayer = null
 var _overlay: Control = null
@@ -83,6 +99,7 @@ func _draw_grid() -> void:
 	var rows := int(ceil(size.y / TILE))
 	_draw_lines(size, columns, rows)
 	_draw_indices(columns, rows)
+	_draw_commands(size)
 
 
 func _draw_lines(size: Vector2, columns: int, rows: int) -> void:
@@ -102,4 +119,20 @@ func _draw_indices(columns: int, rows: int) -> void:
 	for row in rows:
 		var left := Vector2(LABEL_MARGIN, row * TILE + _font_size)
 		_overlay.draw_string(_font, left, str(row),
+			HORIZONTAL_ALIGNMENT_LEFT, -1, _font_size, LABEL_COLOR)
+
+
+func _draw_commands(size: Vector2) -> void:
+	var line_height := _font_size + 3.0
+	var panel := Vector2(148.0, (COMMANDS.size() + 1) * line_height + PANEL_PAD * 2.0)
+	var origin := (size - panel) * 0.5
+	_overlay.draw_rect(Rect2(origin, panel), PANEL_COLOR)
+	var baseline := origin.y + PANEL_PAD + _font_size
+	_overlay.draw_string(_font, Vector2(origin.x + PANEL_PAD, baseline), "COMMANDS",
+		HORIZONTAL_ALIGNMENT_LEFT, -1, _font_size, LABEL_COLOR)
+	for command in COMMANDS:
+		baseline += line_height
+		_overlay.draw_string(_font, Vector2(origin.x + PANEL_PAD, baseline), command[0],
+			HORIZONTAL_ALIGNMENT_LEFT, -1, _font_size, KEY_COLOR)
+		_overlay.draw_string(_font, Vector2(origin.x + PANEL_PAD + KEY_COLUMN, baseline), command[1],
 			HORIZONTAL_ALIGNMENT_LEFT, -1, _font_size, LABEL_COLOR)

@@ -11,6 +11,8 @@ script = ExtResource("1")
 
 [node name="Sprite" type="Sprite2D" parent="."]
 
+[node name="Collision" type="CollisionShape2D" parent="."]
+
 [node name="InteractionArea" type="Area2D" parent="."]
 
 [node name="AreaShape" type="CollisionShape2D" parent="InteractionArea"]

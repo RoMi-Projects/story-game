@@ -107,9 +107,11 @@ physics). The TileMap is committed and **editor-paintable**; the cell bytes
 - `QuestObject` (`scripts/quest/quest_object.gd`, `extends StaticBody2D`) — solid
   inspect/use objects (trash can, container). Owns sprite + interaction
   registration + inspect popup + a quest marker shown when `_wants_marker()` is
-  true. Subclasses define `on_primary()`, `item_name()`, `description()`,
-  `_wants_marker()`. `TrashPiece` extends it too but has no collision so the
-  player walks over it.
+  true. Like `PlaceableItem` it grid-snaps via `WorldGrid.place()` (shared
+  placement maths), sizing its `Collision` to its tile footprint and registering
+  occupancy. Subclasses define `on_primary()`, `item_name()`, `description()`,
+  `_wants_marker()`. `TrashPiece` extends it too and now **blocks its tile like
+  any other object** (it releases the cell when bagged).
 
 **Combat.** Both encounters share `CombatScene` (`scripts/combat/combat_scene.gd`,
 `extends Control`), which owns the dice seed, the `_announce()` message beat, the

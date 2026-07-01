@@ -27,11 +27,42 @@ func snap(pos: Vector2) -> Vector2:
 	return to_world(to_cell(pos))
 
 
-func footprint_of(texture: Texture2D) -> Vector2i:
+static func footprint_of(texture: Texture2D) -> Vector2i:
 	if texture == null:
 		return Vector2i.ONE
 	var size := texture.get_size()
 	return Vector2i(maxi(1, ceili(size.x / TILE)), maxi(1, ceili(size.y / TILE)))
+
+
+static func of(node: Node) -> WorldGrid:
+	return node.get_tree().get_first_node_in_group("world_grid") as WorldGrid
+
+
+## The size of an interaction area that reaches `margin` pixels beyond the object's
+## blocking footprint on every side, so standing adjacent reliably registers.
+static func interaction_extent(footprint: Vector2i, margin: float) -> Vector2:
+	return Vector2(footprint) * TILE + Vector2.ONE * margin * 2.0
+
+
+## Snap `node` to `cell` (deriving it from the node's current centre when the cell
+## is negative), size `collision` to the tile footprint centred on the node, and
+## register the footprint as blocked when `solid`. Returns the resolved cell.
+## Shared by every griddable object so the placement maths lives in one place.
+func place(node: Node2D, collision: CollisionShape2D, cell: Vector2i, footprint: Vector2i, solid: bool) -> Vector2i:
+	var extent := Vector2(footprint) * TILE
+	var origin := cell
+	if origin.x < 0 or origin.y < 0:
+		origin = to_cell(node.position - extent * 0.5)
+	node.position = to_world(origin) + extent * 0.5
+	if collision != null:
+		var rect := RectangleShape2D.new()
+		rect.size = extent
+		collision.shape = rect
+		collision.position = Vector2.ZERO
+		collision.disabled = not solid
+	if solid:
+		register(origin, footprint, node)
+	return origin
 
 
 func cells_for(origin: Vector2i, size: Vector2i) -> Array:
