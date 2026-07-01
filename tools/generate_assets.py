@@ -180,6 +180,49 @@ def draw_wall_tile():
     return image
 
 
+def draw_wall_window_tile():
+    # The window baked into a wall tile (rule 2: it becomes part of the wall).
+    image = draw_wall_tile()
+    pixels = image.load()
+    fill_rect(pixels, 2, 3, 13, 12, PALETTE["frame"])
+    fill_rect(pixels, 3, 4, 12, 11, PALETTE["glass"])
+    fill_rect(pixels, 3, 4, 12, 7, PALETTE["glass_light"])
+    fill_rect(pixels, 7, 4, 8, 11, PALETTE["frame"])
+    fill_rect(pixels, 3, 7, 12, 8, PALETTE["frame"])
+    fill_rect(pixels, 2, 12, 13, 13, PALETTE["frame_dark"])
+    return image
+
+
+def draw_wall_portrait_tile():
+    # The framed portrait baked into a wall tile.
+    image = draw_wall_tile()
+    pixels = image.load()
+    fill_rect(pixels, 3, 2, 12, 13, PALETTE["gold"])
+    fill_rect(pixels, 4, 3, 11, 12, PALETTE["gold_dark"])
+    fill_rect(pixels, 5, 4, 10, 11, PALETTE["wall_mat"])
+    fill_rect(pixels, 6, 5, 9, 7, PALETTE["skin"])
+    fill_rect(pixels, 6, 8, 9, 10, PALETTE["shirt"])
+    return image
+
+
+def draw_tileset_atlas():
+    # One 16px-tiled atlas the world TileSet sources from. Tile order (atlas x):
+    # 0 wall, 1 wall_window, 2 wall_portrait, 3 fence, 4 floor, 5 grass, 6 path.
+    tiles = [
+        draw_wall_tile(),
+        draw_wall_window_tile(),
+        draw_wall_portrait_tile(),
+        draw_fence(),
+        draw_floor_tile(),
+        draw_garden_grass(),
+        draw_garden_path(),
+    ]
+    atlas = new_image(TILE_SIZE * len(tiles), TILE_SIZE)
+    for index, tile in enumerate(tiles):
+        atlas.paste(tile, (index * TILE_SIZE, 0))
+    return atlas
+
+
 def _draw_brick_grout(pixels):
     for row in (0, 8):
         fill_rect(pixels, 0, row, TILE_SIZE - 1, row, PALETTE["wall_grout"])
@@ -1253,6 +1296,7 @@ def main():
     directory.mkdir(parents=True, exist_ok=True)
     save(draw_floor_tile(), "floor_tile.png", directory)
     save(draw_wall_tile(), "wall_tile.png", directory)
+    save(draw_tileset_atlas(), "tileset_atlas.png", directory)
     save(draw_player_spritesheet(), "player_spritesheet.png", directory)
     save(draw_desi_sprite(), "desi.png", directory)
     save(draw_desi_spritesheet(), "desi_spritesheet.png", directory)

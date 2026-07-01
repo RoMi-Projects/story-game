@@ -17,7 +17,7 @@ matching subfolders. File names are **snake_case** throughout.
 | `scripts/autoload/` | Global singletons: `game_state`, `inventory`, `quest_manager`, `interaction_manager`, `build_mode` |
 | `scripts/core/` | Reusable bases: `Character` (walking/facing/wander) and `InteractiveCharacter` (talk-to NPCs) |
 | `scripts/actors/` & `scenes/actors/` | The player, Desi (npc), the garden mouse, and Baby the cat |
-| `scripts/world/` & `scenes/world/` | The house, garden, doors, and placeable furniture |
+| `scripts/world/` & `scenes/world/` | The house, garden, doors, grid-snapping placeable furniture, the `WorldGrid` occupancy service, and wall fixtures. Walls are a `TileMapLayer` driven by `assets/world_tileset.tres` |
 | `scripts/quest/` & `scenes/quest/` | The trash quest objects: can, container, pieces, and the `!`/`✓` marker |
 | `scripts/combat/` & `scenes/combat/` | The Pokemon-style mouse & cat encounters (shared `CombatScene` base) + pure `combat_rules.gd` odds |
 | `scripts/ui/` & `scenes/ui/` | Dialogue box, item popup, inventory panel, quest log, touch controls, trash counter |

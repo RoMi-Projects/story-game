@@ -1,7 +1,9 @@
 [gd_scene load_steps=29 format=3]
 
 [ext_resource type="Texture2D" path="res://assets/floor_tile.png" id="1"]
-[ext_resource type="Texture2D" path="res://assets/wall_tile.png" id="2"]
+[ext_resource type="TileSet" path="res://assets/world_tileset.tres" id="2"]
+[ext_resource type="Script" path="res://scripts/world/world_grid.gd" id="27"]
+[ext_resource type="PackedScene" path="res://scenes/world/wall_fixture.tscn" id="28"]
 [ext_resource type="PackedScene" path="res://scenes/actors/player.tscn" id="3"]
 [ext_resource type="PackedScene" path="res://scenes/ui/touch_controls.tscn" id="4"]
 [ext_resource type="PackedScene" path="res://scenes/actors/desi.tscn" id="5"]
@@ -27,14 +29,11 @@
 [ext_resource type="Texture2D" path="res://assets/trash_fishbone.png" id="25"]
 [ext_resource type="Texture2D" path="res://assets/trash_apple.png" id="26"]
 
-[sub_resource type="RectangleShape2D" id="WallHorizontal"]
-size = Vector2(320, 16)
-
-[sub_resource type="RectangleShape2D" id="WallVertical"]
-size = Vector2(16, 180)
-
 [node name="House" type="Node2D"]
 y_sort_enabled = true
+
+[node name="WorldGrid" type="Node" parent="." groups=["world_grid"]]
+script = ExtResource("27")
 
 [node name="Floor" type="Sprite2D" parent="."]
 z_index = -2
@@ -44,53 +43,10 @@ texture = ExtResource("1")
 region_enabled = true
 region_rect = Rect2(0, 0, 320, 180)
 
-[node name="WallTop" type="Sprite2D" parent="."]
-texture_repeat = 2
-centered = false
-texture = ExtResource("2")
-region_enabled = true
-region_rect = Rect2(0, 0, 320, 16)
-
-[node name="WallBottom" type="Sprite2D" parent="."]
-texture_repeat = 2
-centered = false
-position = Vector2(0, 164)
-texture = ExtResource("2")
-region_enabled = true
-region_rect = Rect2(0, 0, 320, 16)
-
-[node name="WallLeft" type="Sprite2D" parent="."]
-texture_repeat = 2
-centered = false
-texture = ExtResource("2")
-region_enabled = true
-region_rect = Rect2(0, 0, 16, 180)
-
-[node name="WallRight" type="Sprite2D" parent="."]
-texture_repeat = 2
-centered = false
-position = Vector2(304, 0)
-texture = ExtResource("2")
-region_enabled = true
-region_rect = Rect2(0, 0, 16, 180)
-
-[node name="Walls" type="StaticBody2D" parent="."]
-
-[node name="Top" type="CollisionShape2D" parent="Walls"]
-position = Vector2(160, 8)
-shape = SubResource("WallHorizontal")
-
-[node name="Bottom" type="CollisionShape2D" parent="Walls"]
-position = Vector2(160, 172)
-shape = SubResource("WallHorizontal")
-
-[node name="Left" type="CollisionShape2D" parent="Walls"]
-position = Vector2(8, 90)
-shape = SubResource("WallVertical")
-
-[node name="Right" type="CollisionShape2D" parent="Walls"]
-position = Vector2(312, 90)
-shape = SubResource("WallVertical")
+[node name="Walls" type="TileMapLayer" parent="."]
+z_index = -1
+tile_set = ExtResource("2")
+tile_map_data = PackedByteArray(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 6, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 8, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 9, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 10, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 11, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 12, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 13, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 14, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 15, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 16, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 17, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 18, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 19, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 10, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 10, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 10, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 10, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 0, 10, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 0, 10, 0, 0, 0, 0, 0, 0, 0, 0, 0, 6, 0, 10, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 0, 10, 0, 0, 0, 0, 0, 0, 0, 0, 0, 8, 0, 10, 0, 0, 0, 0, 0, 0, 0, 0, 0, 9, 0, 10, 0, 0, 0, 0, 0, 0, 0, 0, 0, 10, 0, 10, 0, 0, 0, 0, 0, 0, 0, 0, 0, 11, 0, 10, 0, 0, 0, 0, 0, 0, 0, 0, 0, 12, 0, 10, 0, 0, 0, 0, 0, 0, 0, 0, 0, 13, 0, 10, 0, 0, 0, 0, 0, 0, 0, 0, 0, 14, 0, 10, 0, 0, 0, 0, 0, 0, 0, 0, 0, 15, 0, 10, 0, 0, 0, 0, 0, 0, 0, 0, 0, 16, 0, 10, 0, 0, 0, 0, 0, 0, 0, 0, 0, 17, 0, 10, 0, 0, 0, 0, 0, 0, 0, 0, 0, 18, 0, 10, 0, 0, 0, 0, 0, 0, 0, 0, 0, 19, 0, 10, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 19, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 19, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 19, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 19, 0, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 19, 0, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 6, 0, 0, 0, 0, 0, 0, 0, 0, 0, 19, 0, 6, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 19, 0, 7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 8, 0, 0, 0, 0, 0, 0, 0, 0, 0, 19, 0, 8, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 9, 0, 0, 0, 0, 0, 0, 0, 0, 0, 19, 0, 9, 0, 0, 0, 0, 0, 0, 0, 0, 0)
 
 [node name="Rug" parent="." instance=ExtResource("7")]
 position = Vector2(236, 110)
@@ -100,26 +56,23 @@ description = "It really ties the room together."
 texture = ExtResource("13")
 solid = false
 
-[node name="WindowLeft" parent="." instance=ExtResource("7")]
-position = Vector2(96, 14)
+[node name="WindowLeftFixture" parent="." instance=ExtResource("28")]
+position = Vector2(104, 16)
 item_name = "Window"
 description = "A lovely view of the great outdoors, smudges and all."
 texture = ExtResource("15")
-solid = false
 
-[node name="WindowRight" parent="." instance=ExtResource("7")]
-position = Vector2(224, 14)
-item_name = "Window"
-description = "A lovely view of the great outdoors, smudges and all."
-texture = ExtResource("15")
-solid = false
-
-[node name="WallPortrait" parent="." instance=ExtResource("7")]
-position = Vector2(160, 15)
+[node name="WallPortraitFixture" parent="." instance=ExtResource("28")]
+position = Vector2(168, 16)
 item_name = "Self Portrait"
 description = "Roberto, looking suspiciously heroic."
 texture = ExtResource("16")
-solid = false
+
+[node name="WindowRightFixture" parent="." instance=ExtResource("28")]
+position = Vector2(232, 16)
+item_name = "Window"
+description = "A lovely view of the great outdoors, smudges and all."
+texture = ExtResource("15")
 
 [node name="KitchenCounter" parent="." instance=ExtResource("7")]
 position = Vector2(62, 42)
